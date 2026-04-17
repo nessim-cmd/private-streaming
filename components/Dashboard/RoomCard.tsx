@@ -46,7 +46,7 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
   };
 
   return (
-    <div className="glass rounded-2xl p-4 sm:p-6 flex flex-col gap-5 sm:gap-6 animate-in transition-all hover:scale-[1.01]">
+    <div className="glass rounded-2xl p-4 sm:p-6 flex flex-col gap-5 sm:gap-6 animate-in transition-all overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="flex gap-3 sm:gap-4 min-w-0">
           <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -57,7 +57,7 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
             <p className="text-xs sm:text-sm text-muted-foreground truncate">ID: {id}</p>
           </div>
         </div>
-        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium shrink-0 w-fit ${
           isActive ? "bg-emerald-500/10 text-emerald-500" : "bg-zinc-500/10 text-zinc-500"
         }`}>
           <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-500 animate-pulse" : "bg-zinc-500"}`} />
@@ -66,17 +66,17 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
       </div>
 
       <div className="grid gap-4 md:grid-cols-[auto_1fr] md:gap-8 items-start">
-        <div className="flex flex-col gap-3 items-center shrink-0 w-full md:w-auto">
+        <div className="flex flex-col gap-3 items-center shrink-0 w-full md:w-auto min-w-0">
           <RoomQRCode value={fullLink} size={104} />
           <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">Scan to join</p>
         </div>
         
-        <div className="flex-1 flex flex-col gap-6 w-full">
+        <div className="flex-1 flex flex-col gap-6 w-full min-w-0">
           {/* Share Link */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Share Link</label>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 bg-zinc-900/50 border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 truncate font-mono">
+              <div className="flex-1 min-w-0 bg-zinc-900/50 border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 truncate font-mono">
                 {fullLink}
               </div>
               <Button variant="outline" size="sm" onClick={copyToClipboard} className="shrink-0 w-full sm:w-auto">

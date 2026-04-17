@@ -56,7 +56,7 @@ export function PWAInstallPrompt() {
   }
 
   return (
-    <div className="fixed left-3 right-3 top-16 z-[60] sm:left-auto sm:right-6 sm:top-6 sm:max-w-sm">
+    <div className="fixed left-3 right-3 top-16 bottom-auto z-[80] sm:left-auto sm:right-6 sm:top-6 sm:bottom-auto sm:max-w-sm">
       <div className="glass rounded-2xl border border-white/15 p-3 sm:p-4 shadow-2xl">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -74,7 +74,7 @@ export function PWAInstallPrompt() {
           </Button>
         </div>
 
-        <Button onClick={install} className="w-full mt-3 gap-2 text-red-400 hover:text-red-300">
+        <Button onClick={install} className="w-full mt-3 gap-2 text-red-500 hover:text-red-400 border border-red-500/40 bg-red-500/10 hover:bg-red-500/15">
           <Download className="h-4 w-4" />
           Install App
         </Button>
