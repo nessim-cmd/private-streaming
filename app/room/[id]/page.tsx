@@ -7,6 +7,7 @@ import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/Button";
 import { StreamEnded } from "@/components/LiveRoom/StreamEnded";
 import { VideoConference } from "@/components/LiveRoom/VideoConference";
+import { RoomSharePanel } from "@/components/LiveRoom/RoomSharePanel";
 import { Bell, CheckCircle2, ChevronLeft, Loader2, Users, Video } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -304,6 +305,12 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
             </div>
           )}
 
+          {isHost && room && (
+            <div className="mb-4">
+              <RoomSharePanel roomId={room.id} roomName={room.name} />
+            </div>
+          )}
+
           {!token ? (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
@@ -440,6 +447,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
               token={token} 
               isHost={isHost} 
               hostIdentity={room.hostIdentity}
+              roomId={room.id}
             />
           )}
         </div>

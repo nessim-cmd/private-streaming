@@ -153,6 +153,16 @@ exports.Prisma.ParticipantScalarFieldEnum = {
   leftAt: 'leftAt'
 };
 
+exports.Prisma.RoomMessageScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  userId: 'userId',
+  senderIdentity: 'senderIdentity',
+  senderName: 'senderName',
+  message: 'message',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -173,7 +183,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Room: 'Room',
   Invitation: 'Invitation',
-  Participant: 'Participant'
+  Participant: 'Participant',
+  RoomMessage: 'RoomMessage'
 };
 
 /**

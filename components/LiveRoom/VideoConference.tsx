@@ -15,9 +15,10 @@ interface VideoConferenceProps {
   token: string;
   isHost: boolean;
   hostIdentity?: string;
+  roomId: string;
 }
 
-export function VideoConference({ token, isHost, hostIdentity }: VideoConferenceProps) {
+export function VideoConference({ token, isHost, hostIdentity, roomId }: VideoConferenceProps) {
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
   return (
@@ -35,7 +36,7 @@ export function VideoConference({ token, isHost, hostIdentity }: VideoConference
         <ControlBar variation="minimal" />
       </section>
 
-      <LiveChatPanel />
+      <LiveChatPanel roomId={roomId} />
       <RoomAudioRenderer />
     </LiveKitRoom>
   );

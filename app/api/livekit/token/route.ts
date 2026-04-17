@@ -1,6 +1,5 @@
 export const dynamic = 'force-dynamic';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { v4 as uuidv4 } from 'uuid';
 import { ZodError, z } from 'zod';
 
 import { db } from '@/lib/db';
@@ -87,7 +86,7 @@ export async function POST(req: Request): Promise<Response> {
         );
       }
 
-      identity = body.identity ?? userId ?? `guest-${uuidv4()}`;
+      identity = body.identity ?? userId;
     }
 
     const token = await generateToken(room.liveKitRoomId, identity, isHost);
