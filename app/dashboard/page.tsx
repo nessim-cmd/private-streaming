@@ -12,7 +12,6 @@ interface Room {
   id: string;
   name: string;
   isActive: boolean;
-  [key: string]: any;
 }
 
 export default function DashboardPage() {
@@ -113,7 +112,7 @@ export default function DashboardPage() {
               </motion.div>
             ) : (
               <AnimatePresence mode="popLayout">
-                {rooms.map((room: any, index: number) => (
+                {rooms.map((room, index: number) => (
                   <motion.div
                     key={room.id}
                     initial={{ opacity: 0, y: 20 }}

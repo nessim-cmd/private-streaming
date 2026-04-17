@@ -61,7 +61,7 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
           isActive ? "bg-emerald-500/10 text-emerald-500" : "bg-zinc-500/10 text-zinc-500"
         }`}>
           <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-500 animate-pulse" : "bg-zinc-500"}`} />
-          {isActive ? "Live Now" : "Ended"}
+          {isActive ? "Live Now" : "Was Live"}
         </div>
       </div>
 

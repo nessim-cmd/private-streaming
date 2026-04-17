@@ -1,5 +1,5 @@
 export const dynamic = 'force-dynamic';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { v4 as uuidv4 } from 'uuid';
 import { ZodError, z } from 'zod';
 
@@ -35,6 +35,7 @@ export async function POST(req: Request): Promise<Response> {
     }
 
     const { userId } = await auth();
+    const clerkUser = userId ? await currentUser() : null;
     const hostRequested = body.isHost === true;
 
     let isHost = false;
@@ -57,6 +58,35 @@ export async function POST(req: Request): Promise<Response> {
       isHost = true;
       identity = body.identity ?? userId;
     } else {
+      if (!userId) {
+        return Response.json(
+          { error: 'Sign in is required before joining this room.' },
+          { status: 401 },
+        );
+      }
+
+      const email = clerkUser?.primaryEmailAddress?.emailAddress;
+
+      if (!email) {
+        return Response.json({ error: 'No primary email found for this account.' }, { status: 400 });
+      }
+
+      const approvedRequest = await db.invitation.findFirst({
+        where: {
+          roomId: room.id,
+          email,
+          status: 'approved',
+        },
+        select: { id: true },
+      });
+
+      if (!approvedRequest) {
+        return Response.json(
+          { error: 'Host approval is required before joining this room.', code: 'APPROVAL_REQUIRED' },
+          { status: 403 },
+        );
+      }
+
       identity = body.identity ?? userId ?? `guest-${uuidv4()}`;
     }
 

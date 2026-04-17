@@ -39,6 +39,7 @@ export async function GET(
         isActive: room.isActive,
         createdAt: room.createdAt,
         endedAt: room.endedAt,
+        hostIdentity: room.host.clerkId,
       },
       isHost 
     });

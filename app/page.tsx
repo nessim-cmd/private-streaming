@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Video, Shield, Share2, Smartphone } from "lucide-react";
+import { Shield, Share2, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Home() {
