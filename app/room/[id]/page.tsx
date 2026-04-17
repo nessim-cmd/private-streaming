@@ -262,7 +262,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <div className="flex-1 flex flex-col">
-      <header className="border-b border-border bg-background/50 backdrop-blur-sm px-4 sm:px-8 py-4">
+      <header className="border-b border-border bg-background/50 backdrop-blur-sm px-3 sm:px-8 py-3 sm:py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button 
@@ -270,13 +270,13 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
               size="sm" 
               onClick={handleExit}
               disabled={endingRoom}
-              className="hidden md:flex gap-2"
+              className="flex gap-2 px-2 sm:px-3"
             >
               <ChevronLeft className="h-4 w-4" />
-              {endingRoom ? "Ending..." : "Exit"}
+              <span className="hidden sm:inline">{endingRoom ? "Ending..." : "Exit"}</span>
             </Button>
             <div>
-              <h1 className="text-lg font-bold text-white flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                 {room.name}
               </h1>
@@ -293,11 +293,11 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col p-4 sm:p-8">
+      <main className="flex-1 flex flex-col p-3 sm:p-8">
         <div className="container mx-auto flex-1 flex flex-col max-w-6xl">
           {isHost && room && room.isActive === false && (
             <div className="space-y-4 mb-4">
-              <div className="glass rounded-2xl border border-white/10 p-6">
+              <div className="glass rounded-2xl border border-white/10 p-4 sm:p-6">
                 <h2 className="text-xl font-bold text-white">This room is currently ended</h2>
                 <p className="text-zinc-300 mt-2">
                   You can reopen it to go live again, or review all past messages below.
@@ -357,7 +357,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
               animate={{ opacity: 1, scale: 1 }}
               className="flex-1 flex items-center justify-center"
             >
-              <div className="glass p-12 rounded-3xl max-w-md w-full text-center space-y-8">
+              <div className="glass p-6 sm:p-12 rounded-3xl max-w-md w-full text-center space-y-6 sm:space-y-8">
                 <div className="h-20 w-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary">
                   <Video className="h-10 w-10" />
                 </div>

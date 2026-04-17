@@ -90,41 +90,41 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
   };
 
   return (
-    <section className="glass rounded-2xl border border-white/10 p-4 sm:p-5 space-y-4 animate-in">
+    <section className="glass rounded-2xl border border-white/10 p-3 sm:p-5 space-y-4 animate-in">
       <div className="flex items-center gap-2">
         <QrCode className="h-4 w-4 text-primary" />
         <h3 className="text-sm font-semibold text-white">Share this room</h3>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[auto_1fr] lg:items-start">
+      <div className="grid gap-3 sm:gap-4 lg:grid-cols-[auto_1fr] lg:items-start">
         <div className="flex flex-col items-center gap-2 shrink-0">
-          <RoomQRCode value={shareableLink} size={128} />
+          <RoomQRCode value={shareableLink} size={112} />
           <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">QR to join</p>
         </div>
 
         <div className="space-y-3 min-w-0">
           <div className="space-y-2">
             <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Link</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1 min-w-0 rounded-lg border border-border bg-zinc-900/50 px-3 py-2 text-sm text-zinc-300 truncate font-mono">
                 {shareableLink}
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={copyLink} className="shrink-0 gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={copyLink} className="shrink-0 gap-2 w-full sm:w-auto">
                 {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 {isCopied ? "Copied" : "Copy"}
               </Button>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={shareLink} className="gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={shareLink} className="gap-2 justify-center">
               <Share2 className="h-4 w-4" />
               {isShared ? "Share Opened" : "Open Share Sheet"}
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={openMessengerShare} className="gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={openMessengerShare} className="gap-2 justify-center">
               Messenger
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={shareToInstagram} className="gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={shareToInstagram} className="gap-2 justify-center">
               Instagram
             </Button>
           </div>
@@ -139,7 +139,7 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
                 onChange={(event) => setEmail(event.target.value)}
                 className="bg-zinc-900/50"
               />
-              <Button type="submit" disabled={isInviting || !email.trim()} className="shrink-0 gap-2">
+              <Button type="submit" disabled={isInviting || !email.trim()} className="shrink-0 gap-2 w-full sm:w-auto">
                 {isInviting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
                 {isInviting ? "Sending..." : "Send Invite"}
               </Button>

@@ -54,7 +54,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 max-w-4xl">
       <div className="flex flex-col gap-8">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -65,7 +65,7 @@ export default function DashboardPage() {
 
         <form
           onSubmit={createRoom}
-          className="glass rounded-2xl p-6 flex flex-col sm:flex-row gap-4 items-end"
+          className="glass rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row gap-3 sm:gap-4 items-end"
         >
           <div className="flex-1 w-full space-y-2">
             <label htmlFor="room-name" className="text-sm font-medium text-zinc-400">
@@ -80,7 +80,7 @@ export default function DashboardPage() {
               className="bg-zinc-900/50"
             />
           </div>
-          <Button type="submit" disabled={creating || !name} className="w-full sm:w-auto h-10 px-6 gap-2">
+          <Button type="submit" disabled={creating || !name} className="w-full sm:w-auto h-10 px-4 sm:px-6 gap-2 text-sm sm:text-base">
             {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
             Create Room
           </Button>
@@ -92,7 +92,7 @@ export default function DashboardPage() {
             Active & Past Rooms
           </h2>
           
-          <div className="grid gap-6">
+          <div className="grid gap-4 sm:gap-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />

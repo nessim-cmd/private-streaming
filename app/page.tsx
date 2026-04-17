@@ -7,14 +7,14 @@ import { motion } from "framer-motion";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+    <div className="flex flex-col items-center justify-center py-10 sm:py-20 px-4 text-center">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="max-w-4xl mx-auto"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] sm:text-xs font-medium mb-6 sm:mb-8">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -22,26 +22,26 @@ export default function Home() {
           Next Generation Streaming
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-4 sm:mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent leading-[1.05]">
           Private Streaming <br />
           <span className="text-primary">Simplified.</span>
         </h1>
         
-        <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
           Create secure, private live streaming rooms in seconds. 
           Invite guests with a single link, QR code, or email. No complicated setup.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20">
-          <Button asChild size="lg" className="h-14 px-8 text-lg font-semibold">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-14 sm:mb-20">
+          <Button asChild size="lg" className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-semibold">
             <Link href="/dashboard">Start Your Stream</Link>
           </Button>
-          <Button asChild variant="outline" size="lg" className="h-14 px-8 text-lg font-semibold">
+          <Button asChild variant="outline" size="lg" className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-semibold">
             <Link href="/sign-in">Join a Room</Link>
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 text-left mt-4 sm:mt-10">
           {[
             {
               icon: Shield,

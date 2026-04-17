@@ -46,15 +46,15 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
   };
 
   return (
-    <div className="glass rounded-2xl p-6 flex flex-col gap-6 animate-in transition-all hover:scale-[1.01]">
-      <div className="flex items-start justify-between">
-        <div className="flex gap-4">
+    <div className="glass rounded-2xl p-4 sm:p-6 flex flex-col gap-5 sm:gap-6 animate-in transition-all hover:scale-[1.01]">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="flex gap-3 sm:gap-4 min-w-0">
           <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
             <Video className="h-6 w-6" />
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-white">{name}</h3>
-            <p className="text-sm text-muted-foreground">ID: {id}</p>
+          <div className="min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-white truncate">{name}</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">ID: {id}</p>
           </div>
         </div>
         <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
@@ -65,7 +65,7 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-8 items-start">
+      <div className="flex flex-col md:flex-row gap-4 sm:gap-8 items-start">
         <div className="flex flex-col gap-4 items-center shrink-0">
           <RoomQRCode value={fullLink} size={120} />
           <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">Scan to join</p>
@@ -88,7 +88,7 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
           {/* Invite Guests */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Invite via Email</label>
-            <form onSubmit={sendInvite} className="flex gap-2">
+            <form onSubmit={sendInvite} className="flex flex-col sm:flex-row gap-2">
               <Input 
                 type="email" 
                 placeholder="friend@example.com" 
@@ -96,14 +96,14 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 h-9 bg-zinc-900/50"
               />
-              <Button type="submit" size="sm" disabled={isInviting || !email} className="shrink-0 gap-2">
+              <Button type="submit" size="sm" disabled={isInviting || !email} className="shrink-0 gap-2 w-full sm:w-auto">
                 {isInviting ? <Loader2 className="h-4 w-4 animate-spin" /> : isInvited ? <Check className="h-4 w-4" /> : <Mail className="h-4 w-4" />}
                 {isInvited ? "Sent!" : "Invite"}
               </Button>
             </form>
           </div>
           
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-2 sm:gap-3 pt-2">
             <Button asChild className="flex-1 gap-2" variant="primary">
               <Link href={shareableLink}>
                 <Video className="h-4 w-4" />

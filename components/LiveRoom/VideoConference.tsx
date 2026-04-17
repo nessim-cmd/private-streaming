@@ -31,7 +31,7 @@ export function VideoConference({ token, isHost, hostIdentity, roomId }: VideoCo
       data-lk-theme="default"
       className="flex-1 rounded-2xl overflow-hidden border border-border bg-black/40 flex flex-col"
     >
-      <section className="relative flex-1 min-h-[60vh] bg-black">
+      <section className="relative flex-1 min-h-[68vh] sm:min-h-[60vh] bg-black">
         <FocusedVideoLayout hostIdentity={hostIdentity} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-black/35" />
         <LiveOverlayFeed roomId={roomId} />

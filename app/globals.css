@@ -34,6 +34,12 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+}
+
+html,
+body {
+  min-height: 100%;
 }
 
 @layer base {
@@ -85,5 +91,13 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.safe-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-pt {
+  padding-top: env(safe-area-inset-top);
 }
 
