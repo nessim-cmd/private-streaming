@@ -10,14 +10,14 @@ import {
   useTracks,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
+import { LiveChatPanel } from "@/components/LiveRoom/LiveChatPanel";
 
 interface VideoConferenceProps {
   token: string;
-  roomName: string;
   isHost: boolean;
 }
 
-export function VideoConference({ token, roomName, isHost }: VideoConferenceProps) {
+export function VideoConference({ token, isHost }: VideoConferenceProps) {
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
   return (
@@ -28,10 +28,14 @@ export function VideoConference({ token, roomName, isHost }: VideoConferenceProp
       serverUrl={serverUrl}
       connect={true}
       data-lk-theme="default"
-      className="flex-1 flex flex-col rounded-2xl overflow-hidden border border-border bg-black/40"
+      className="flex-1 flex flex-col lg:flex-row rounded-2xl overflow-hidden border border-border bg-black/40 gap-3 p-3"
     >
-      <VideoLayout />
-      <ControlBar variation="minimal" />
+      <section className="flex-1 min-h-0 flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-black/35">
+        <VideoLayout />
+        <ControlBar variation="minimal" />
+      </section>
+
+      <LiveChatPanel />
       <RoomAudioRenderer />
     </LiveKitRoom>
   );

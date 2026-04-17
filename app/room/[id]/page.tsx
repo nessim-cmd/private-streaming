@@ -153,7 +153,6 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
           ) : (
             <VideoConference 
               token={token} 
-              roomName={room.id} 
               isHost={isHost} 
             />
           )}

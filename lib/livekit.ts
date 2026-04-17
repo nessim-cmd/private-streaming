@@ -50,6 +50,7 @@ export async function generateToken(
     room: roomName,
     roomJoin: true,
     canPublish: isHost,
+    canPublishData: true,
     canSubscribe: true,
   });
 
