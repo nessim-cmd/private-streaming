@@ -65,9 +65,9 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 sm:gap-8 items-start">
-        <div className="flex flex-col gap-4 items-center shrink-0">
-          <RoomQRCode value={fullLink} size={120} />
+      <div className="grid gap-4 md:grid-cols-[auto_1fr] md:gap-8 items-start">
+        <div className="flex flex-col gap-3 items-center shrink-0 w-full md:w-auto">
+          <RoomQRCode value={fullLink} size={104} />
           <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">Scan to join</p>
         </div>
         
@@ -75,11 +75,11 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
           {/* Share Link */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Share Link</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1 bg-zinc-900/50 border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 truncate font-mono">
                 {fullLink}
               </div>
-              <Button variant="outline" size="sm" onClick={copyToClipboard} className="shrink-0">
+              <Button variant="outline" size="sm" onClick={copyToClipboard} className="shrink-0 w-full sm:w-auto">
                 <Copy className="h-4 w-4" />
               </Button>
             </div>
@@ -103,14 +103,14 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
             </form>
           </div>
           
-          <div className="flex gap-2 sm:gap-3 pt-2">
-            <Button asChild className="flex-1 gap-2" variant="primary">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
+            <Button asChild className="flex-1 gap-2 w-full" variant="primary">
               <Link href={shareableLink}>
                 <Video className="h-4 w-4" />
                 Open Room
               </Link>
             </Button>
-            <Button variant="outline" asChild className="shrink-0">
+            <Button variant="outline" asChild className="shrink-0 w-full sm:w-auto">
               <Link href={shareableLink} target="_blank">
                 <ExternalLink className="h-4 w-4" />
               </Link>

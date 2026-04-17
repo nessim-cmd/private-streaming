@@ -133,10 +133,10 @@ export function LiveOverlayFeed({ roomId }: LiveOverlayFeedProps) {
 
   return (
     <div className="pointer-events-none absolute inset-0 p-2 sm:p-4 flex flex-col justify-between gap-2">
-      <div className="self-stretch sm:self-end w-full sm:max-w-sm pointer-events-auto">
-        <div className="rounded-2xl border border-white/20 bg-black/35 backdrop-blur-md p-3 space-y-2">
+      <div className="self-start sm:self-end w-full sm:max-w-sm pointer-events-auto">
+        <div className="rounded-2xl border border-white/20 bg-black/30 backdrop-blur-md p-2.5 sm:p-3 space-y-2">
           <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-300">Live Audience</p>
-          <div className="max-h-36 sm:max-h-56 overflow-y-auto space-y-2 pr-1">
+          <div className="max-h-28 sm:max-h-56 overflow-y-auto space-y-1.5 pr-1">
             {participantRows.length === 0 ? (
               <p className="text-xs text-zinc-400">No participants yet.</p>
             ) : (
@@ -145,14 +145,14 @@ export function LiveOverlayFeed({ roomId }: LiveOverlayFeedProps) {
                 return (
                   <div
                     key={row.identity}
-                    className="flex items-start gap-2 rounded-xl bg-black/30 border border-white/10 px-2.5 py-2"
+                    className="flex items-start gap-2 rounded-xl bg-black/30 border border-white/10 px-2 py-1.5"
                   >
-                    <div className="h-7 w-7 rounded-full bg-primary/30 text-white text-xs font-semibold flex items-center justify-center shrink-0">
+                    <div className="h-6 w-6 rounded-full bg-primary/30 text-white text-[11px] font-semibold flex items-center justify-center shrink-0">
                       {avatarLetter}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-zinc-100 truncate">{row.label}</p>
-                      <p className="text-xs text-zinc-300 truncate">
+                      <p className="text-xs sm:text-sm font-medium text-zinc-100 truncate">{row.label}</p>
+                      <p className="text-[11px] sm:text-xs text-zinc-300 truncate">
                         {row.latestMessage.length > 0 ? row.latestMessage : "No comment yet"}
                       </p>
                     </div>
@@ -172,7 +172,7 @@ export function LiveOverlayFeed({ roomId }: LiveOverlayFeedProps) {
             placeholder="Write a comment..."
             maxLength={500}
             disabled={isSending}
-            className="h-10 bg-zinc-900/70 border-zinc-700 text-sm"
+            className="h-10 bg-zinc-900/70 border-zinc-700 text-sm min-w-0"
             onKeyDown={(event) => event.stopPropagation()}
             onKeyUp={(event) => event.stopPropagation()}
           />

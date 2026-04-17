@@ -56,10 +56,12 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 max-w-4xl">
       <div className="flex flex-col gap-8">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-white">Your Live Rooms</h1>
-            <p className="text-muted-foreground">Manage and create your private streaming spaces.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Your Live Rooms</h1>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-xl">
+              Manage and create your private streaming spaces.
+            </p>
           </div>
         </header>
 
@@ -86,7 +88,7 @@ export default function DashboardPage() {
           </Button>
         </form>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <h2 className="text-lg font-semibold text-zinc-300 flex items-center gap-2">
             <Video className="h-5 w-5 text-primary" />
             Active & Past Rooms

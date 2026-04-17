@@ -347,7 +347,20 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
           {isHost && room && (
             <div className="mb-4">
-              <RoomSharePanel roomId={room.id} roomName={room.name} />
+              <div className="md:hidden">
+                <details className="glass rounded-2xl border border-white/10 overflow-hidden">
+                  <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-white flex items-center justify-between">
+                    Share room
+                    <span className="text-zinc-400 text-xs">QR, link, email</span>
+                  </summary>
+                  <div className="px-3 pb-3">
+                    <RoomSharePanel roomId={room.id} roomName={room.name} />
+                  </div>
+                </details>
+              </div>
+              <div className="hidden md:block">
+                <RoomSharePanel roomId={room.id} roomName={room.name} />
+              </div>
             </div>
           )}
 
