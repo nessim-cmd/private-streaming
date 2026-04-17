@@ -1,5 +1,13 @@
 import { Resend } from 'resend';
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is not configured.`);
+  }
+  return value;
+}
+
 export async function sendInviteEmail({
   to,
   roomName,
@@ -11,9 +19,12 @@ export async function sendInviteEmail({
   roomLink: string;
   hostName: string;
 }) {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  return resend.emails.send({
-    from: 'PrivateLive <onboarding@resend.dev>', // Should be a verified domain in production
+  const resendApiKey = requireEnv('RESEND_API_KEY');
+  const resend = new Resend(resendApiKey);
+  const fromAddress = process.env.RESEND_FROM_EMAIL ?? 'PrivateLive <onboarding@resend.dev>';
+
+  const result = await resend.emails.send({
+    from: fromAddress,
     to,
     subject: `${hostName} invited you to a private live room: ${roomName}`,
     html: `
@@ -32,4 +43,10 @@ export async function sendInviteEmail({
       </div>
     `,
   });
+
+  if (result.error) {
+    throw new Error(`Resend rejected invite email: ${result.error.message}`);
+  }
+
+  return result;
 }

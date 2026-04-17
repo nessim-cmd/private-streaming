@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { z } from 'zod';
+import { ZodError, z } from 'zod';
 import { db } from '@/lib/db';
 import { sendInviteEmail } from '@/lib/resend';
 
@@ -9,7 +9,7 @@ const inviteSchema = z.object({
   email: z.string().email(),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<Response> {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -34,7 +34,16 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Only the host can send invites.' }, { status: 403 });
     }
 
-    // Save invitation to DB
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const roomLink = `${appUrl}/room/${room.id}`;
+
+    const emailResult = await sendInviteEmail({
+      to: body.email,
+      roomName: room.name,
+      roomLink,
+      hostName,
+    });
+
     await db.invitation.create({
       data: {
         roomId: body.roomId,
@@ -43,18 +52,17 @@ export async function POST(req: Request) {
       },
     });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const roomLink = `${appUrl}/room/${room.id}`;
-
-    await sendInviteEmail({
-      to: body.email,
-      roomName: room.name,
-      roomLink,
-      hostName,
-    });
-
-    return Response.json({ success: true });
+    return Response.json({ success: true, messageId: emailResult.data?.id ?? null });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return Response.json({ error: 'Invalid input.', details: error.flatten() }, { status: 400 });
+    }
+
+    if (error instanceof Error) {
+      console.error('Failed to send invite:', error.message);
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+
     console.error('Failed to send invite:', error);
     return Response.json({ error: 'Internal server error.' }, { status: 500 });
   }

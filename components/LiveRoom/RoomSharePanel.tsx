@@ -80,9 +80,12 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomId, email }),
       });
+      const payload = await response.json();
 
       if (response.ok) {
         setEmail("");
+      } else {
+        console.error("Invite email failed:", payload?.error ?? "Unknown error");
       }
     } finally {
       setIsInviting(false);

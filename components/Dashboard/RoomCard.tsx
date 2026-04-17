@@ -33,10 +33,14 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ roomId: id, email }),
       });
+      const payload = await res.json();
+
       if (res.ok) {
         setIsInvited(true);
         setEmail("");
         setTimeout(() => setIsInvited(false), 3000);
+      } else {
+        console.error("Invite email failed:", payload?.error ?? "Unknown error");
       }
     } catch (error) {
       console.error("Failed to send invite:", error);
