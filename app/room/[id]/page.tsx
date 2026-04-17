@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { StreamEnded } from "@/components/LiveRoom/StreamEnded";
 import { VideoConference } from "@/components/LiveRoom/VideoConference";
 import { RoomSharePanel } from "@/components/LiveRoom/RoomSharePanel";
+import { RoomMessageHistory } from "@/components/LiveRoom/RoomMessageHistory";
 import { Bell, CheckCircle2, ChevronLeft, Loader2, Users, Video } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -35,6 +36,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
+  const [reopening, setReopening] = useState(false);
   const [endingRoom, setEndingRoom] = useState(false);
   const [accessStatus, setAccessStatus] = useState<AccessStatus>("unknown");
   const [requestingAccess, setRequestingAccess] = useState(false);
@@ -210,6 +212,24 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
+  const reopenRoom = async () => {
+    if (!isHost || !room || room.isActive) {
+      return;
+    }
+
+    setReopening(true);
+    try {
+      const response = await fetch(`/api/rooms/${id}/reopen`, { method: "POST" });
+      if (response.ok) {
+        setRoom((previous) => (previous ? { ...previous, isActive: true, endedAt: null } : previous));
+      }
+    } catch (error) {
+      console.error("Failed to reopen room:", error);
+    } finally {
+      setReopening(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4">
@@ -236,7 +256,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
     );
   }
 
-  if (room.isActive === false) {
+  if (room.isActive === false && !isHost) {
     return <StreamEnded />;
   }
 
@@ -275,6 +295,26 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
       <main className="flex-1 flex flex-col p-4 sm:p-8">
         <div className="container mx-auto flex-1 flex flex-col max-w-6xl">
+          {isHost && room && room.isActive === false && (
+            <div className="space-y-4 mb-4">
+              <div className="glass rounded-2xl border border-white/10 p-6">
+                <h2 className="text-xl font-bold text-white">This room is currently ended</h2>
+                <p className="text-zinc-300 mt-2">
+                  You can reopen it to go live again, or review all past messages below.
+                </p>
+                <div className="flex flex-wrap gap-2 mt-4">
+                  <Button onClick={reopenRoom} disabled={reopening} className="gap-2">
+                    {reopening ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                    {reopening ? "Reopening..." : "Reopen Room"}
+                  </Button>
+                  <Button variant="outline" onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
+                </div>
+              </div>
+
+              <RoomMessageHistory roomId={room.id} />
+            </div>
+          )}
+
           {isHost && token && joinRequests.length > 0 && (
             <div className="mb-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-4 py-3">
               <div className="flex items-center gap-2 text-amber-200 text-sm font-medium">
@@ -311,7 +351,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
             </div>
           )}
 
-          {!token ? (
+          {!token && room.isActive ? (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -442,14 +482,14 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                 )}
               </div>
             </motion.div>
-          ) : (
+          ) : room.isActive ? (
             <VideoConference 
               token={token} 
               isHost={isHost} 
               hostIdentity={room.hostIdentity}
               roomId={room.id}
             />
-          )}
+          ) : null}
         </div>
       </main>
     </div>

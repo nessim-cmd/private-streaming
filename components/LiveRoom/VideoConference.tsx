@@ -9,7 +9,7 @@ import {
   useTracks,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import { LiveChatPanel } from "@/components/LiveRoom/LiveChatPanel";
+import { LiveOverlayFeed } from "@/components/LiveRoom/LiveOverlayFeed";
 
 interface VideoConferenceProps {
   token: string;
@@ -29,14 +29,17 @@ export function VideoConference({ token, isHost, hostIdentity, roomId }: VideoCo
       serverUrl={serverUrl}
       connect={true}
       data-lk-theme="default"
-      className="flex-1 flex flex-col lg:flex-row rounded-2xl overflow-hidden border border-border bg-black/40 gap-3 p-3"
+      className="flex-1 rounded-2xl overflow-hidden border border-border bg-black/40 flex flex-col"
     >
-      <section className="flex-1 min-h-0 flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-black/35">
+      <section className="relative flex-1 min-h-[60vh] bg-black">
         <FocusedVideoLayout hostIdentity={hostIdentity} />
-        <ControlBar variation="minimal" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-black/35" />
+        <LiveOverlayFeed roomId={roomId} />
       </section>
 
-      <LiveChatPanel roomId={roomId} />
+      <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-3 py-2">
+        <ControlBar variation="minimal" />
+      </div>
       <RoomAudioRenderer />
     </LiveKitRoom>
   );
@@ -72,34 +75,20 @@ function FocusedVideoLayout({ hostIdentity }: { hostIdentity?: string }) {
   }, [mainTrack, tracks]);
 
   return (
-    <div className="flex-1 min-h-0 flex gap-3 p-3">
-      <div className="flex-1 rounded-2xl overflow-hidden border border-white/10 bg-black/40 min-h-0">
-        {mainTrack ? (
-          <ParticipantTile trackRef={mainTrack} className="h-full w-full" />
-        ) : (
-          <div className="h-full flex items-center justify-center text-sm text-zinc-400">
-            Waiting for camera...
-          </div>
-        )}
-      </div>
-
-      <aside className="w-44 xl:w-52 shrink-0 rounded-2xl border border-white/10 bg-black/35 p-2 overflow-y-auto">
-        <div className="text-[11px] uppercase tracking-wider text-zinc-400 mb-2 px-1">Participants</div>
-        <div className="space-y-2">
-          {sideTracks.length === 0 ? (
-            <div className="text-xs text-zinc-500 px-1 py-2">No one else yet.</div>
-          ) : (
-            sideTracks.map((track) => (
-              <div
-                key={`${track.participant.identity}-${track.source}`}
-                className="rounded-xl overflow-hidden border border-white/10 bg-black/40 h-28"
-              >
-                <ParticipantTile trackRef={track} className="h-full w-full" />
-              </div>
-            ))
-          )}
+    <div className="h-full w-full">
+      {mainTrack ? (
+        <ParticipantTile trackRef={mainTrack} className="h-full w-full" />
+      ) : (
+        <div className="h-full flex items-center justify-center text-sm text-zinc-400">
+          Waiting for camera...
         </div>
-      </aside>
+      )}
+
+      <div className="hidden">
+        {sideTracks.map((track) => (
+          <span key={`${track.participant.identity}-${track.source}`} />
+        ))}
+      </div>
     </div>
   );
 }
