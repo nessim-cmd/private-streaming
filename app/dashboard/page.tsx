@@ -54,7 +54,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-12 max-w-4xl">
+    <div className="container mx-auto w-full px-3 sm:px-4 py-6 sm:py-12 max-w-6xl xl:max-w-7xl">
       <div className="flex flex-col gap-8">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
           <div>
@@ -94,9 +94,9 @@ export default function DashboardPage() {
             Active & Past Rooms
           </h2>
           
-          <div className="grid gap-4 sm:gap-6">
+          <div className="grid gap-4 sm:gap-6 xl:grid-cols-2 xl:items-start">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <div className="flex flex-col items-center justify-center py-20 gap-4 xl:col-span-2">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
                 <p className="text-muted-foreground">Loading your rooms...</p>
               </div>
@@ -104,7 +104,7 @@ export default function DashboardPage() {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center py-20 glass rounded-2xl border-dashed border-2"
+                className="text-center py-20 glass rounded-2xl border-dashed border-2 xl:col-span-2"
               >
                 <div className="bg-primary/10 h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
                   <Video className="h-8 w-8" />
@@ -120,6 +120,7 @@ export default function DashboardPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
+                    className="w-full"
                   >
                     <RoomCard
                       id={room.id}
