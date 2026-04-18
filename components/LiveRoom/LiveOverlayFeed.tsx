@@ -1,10 +1,10 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useChat, useParticipants } from "@livekit/components-react";
+import { useChat } from "@livekit/components-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { SendHorizontal } from "lucide-react";
+import { Eye, EyeOff, Expand, Minimize2, SendHorizontal } from "lucide-react";
 
 interface PersistedMessage {
   id: string;
@@ -18,27 +18,13 @@ interface LiveOverlayFeedProps {
   roomId: string;
 }
 
-function getParticipantLabel(name?: string | null, identity?: string): string {
-  if (name && name.trim().length > 0) {
-    return name;
-  }
-
-  if (!identity) {
-    return "Guest";
-  }
-
-  if (identity.startsWith("guest-")) {
-    return "Guest";
-  }
-
-  return identity;
-}
+type ChatDisplayMode = "hidden" | "compact" | "full";
 
 export function LiveOverlayFeed({ roomId }: LiveOverlayFeedProps) {
   const { chatMessages, send, isSending } = useChat();
-  const participants = useParticipants();
   const [message, setMessage] = useState("");
   const [historyMessages, setHistoryMessages] = useState<PersistedMessage[]>([]);
+  const [displayMode, setDisplayMode] = useState<ChatDisplayMode>("compact");
 
   useEffect(() => {
     let isMounted = true;
@@ -88,27 +74,8 @@ export function LiveOverlayFeed({ roomId }: LiveOverlayFeedProps) {
     );
   }, [historyMessages, liveMessages]);
 
-  const latestMessageByIdentity = useMemo(() => {
-    const latest = new Map<string, PersistedMessage>();
-
-    for (const item of mergedMessages) {
-      latest.set(item.senderIdentity, item);
-    }
-
-    return latest;
-  }, [mergedMessages]);
-
-  const participantRows = useMemo(() => {
-    return participants.map((participant) => {
-      const label = getParticipantLabel(participant.name, participant.identity);
-      const latestMessage = latestMessageByIdentity.get(participant.identity);
-      return {
-        identity: participant.identity,
-        label,
-        latestMessage: latestMessage?.message ?? "",
-      };
-    });
-  }, [participants, latestMessageByIdentity]);
+  const compactMessages = useMemo(() => mergedMessages.slice(-2), [mergedMessages]);
+  const fullMessages = useMemo(() => mergedMessages.slice(-50), [mergedMessages]);
 
   const submitMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -131,61 +98,118 @@ export function LiveOverlayFeed({ roomId }: LiveOverlayFeedProps) {
     setMessage("");
   };
 
+  const toggleVisibility = () => {
+    setDisplayMode((previous) => (previous === "hidden" ? "compact" : "hidden"));
+  };
+
+  const toggleCompactFull = () => {
+    setDisplayMode((previous) => (previous === "full" ? "compact" : "full"));
+  };
+
+  const formatSender = (senderName: string, senderIdentity: string) => {
+    if (senderName.trim().length > 0) {
+      return senderName;
+    }
+
+    if (senderIdentity.startsWith("guest-")) {
+      return "Guest";
+    }
+
+    return senderIdentity;
+  };
+
   return (
     <div className="pointer-events-none absolute inset-0 p-2 sm:p-4 flex flex-col justify-between gap-2">
-      <div className="self-start sm:self-end w-full sm:max-w-sm pointer-events-auto">
-        <div className="rounded-2xl border border-white/20 bg-black/30 backdrop-blur-md p-2.5 sm:p-3 space-y-2">
-          <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-300">Live Audience</p>
-          <div className="max-h-28 sm:max-h-56 overflow-y-auto space-y-1.5 pr-1">
-            {participantRows.length === 0 ? (
-              <p className="text-xs text-zinc-400">No participants yet.</p>
+      <div className="self-end pointer-events-auto flex items-center gap-2">
+        <Button
+          type="button"
+          onClick={toggleVisibility}
+          className="h-8 px-3 bg-black/60 border border-white/20 hover:bg-black/75"
+          aria-label={displayMode === "hidden" ? "Show chat" : "Hide chat"}
+        >
+          {displayMode === "hidden" ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+        </Button>
+
+        {displayMode !== "hidden" && (
+          <Button
+            type="button"
+            onClick={toggleCompactFull}
+            className="h-8 px-3 bg-black/60 border border-white/20 hover:bg-black/75"
+            aria-label={displayMode === "full" ? "Show compact chat" : "Show full chat"}
+          >
+            {displayMode === "full" ? <Minimize2 className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
+          </Button>
+        )}
+      </div>
+
+      {displayMode === "compact" && (
+        <div className="pointer-events-auto w-full overflow-x-auto">
+          <div className="inline-flex min-w-full sm:min-w-0 gap-2 pb-1">
+            {compactMessages.length === 0 ? (
+              <div className="rounded-xl border border-white/15 bg-black/45 px-3 py-2 text-xs text-zinc-300">
+                No chat yet.
+              </div>
             ) : (
-              participantRows.map((row) => {
-                const avatarLetter = row.label.charAt(0).toUpperCase();
-                return (
-                  <div
-                    key={row.identity}
-                    className="flex items-start gap-2 rounded-xl bg-black/30 border border-white/10 px-2 py-1.5"
-                  >
-                    <div className="h-6 w-6 rounded-full bg-primary/30 text-white text-[11px] font-semibold flex items-center justify-center shrink-0">
-                      {avatarLetter}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-zinc-100 truncate">{row.label}</p>
-                      <p className="text-[11px] sm:text-xs text-zinc-300 truncate">
-                        {row.latestMessage.length > 0 ? row.latestMessage : "No comment yet"}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })
+              compactMessages.map((item) => (
+                <div
+                  key={item.id}
+                  className="max-w-[80vw] sm:max-w-sm rounded-xl border border-white/15 bg-black/45 px-3 py-2 backdrop-blur-sm"
+                >
+                  <p className="text-[11px] text-zinc-300 font-medium truncate">
+                    {formatSender(item.senderName, item.senderIdentity)}
+                  </p>
+                  <p className="text-xs text-zinc-100 break-words line-clamp-2">{item.message}</p>
+                </div>
+              ))
             )}
           </div>
         </div>
-      </div>
+      )}
 
-      <form onSubmit={submitMessage} className="pointer-events-auto w-full sm:max-w-xl">
-        <div className="flex items-center gap-2 rounded-2xl border border-white/20 bg-black/35 backdrop-blur-md p-2">
-          <Input
-            value={message}
-            onChange={(event) => setMessage(event.target.value)}
-            placeholder="Write a comment..."
-            maxLength={500}
-            disabled={isSending}
-            className="h-10 bg-zinc-900/70 border-zinc-700 text-sm min-w-0"
-            onKeyDown={(event) => event.stopPropagation()}
-            onKeyUp={(event) => event.stopPropagation()}
-          />
-          <Button
-            type="submit"
-            disabled={isSending || message.trim().length === 0}
-            className="h-10 px-3"
-            aria-label="Send message"
-          >
-            <SendHorizontal className="h-4 w-4" />
-          </Button>
+      {displayMode === "full" && (
+        <div className="pointer-events-auto w-full sm:max-w-xl space-y-2">
+          <div className="rounded-2xl border border-white/20 bg-black/35 backdrop-blur-md p-3 space-y-2">
+            <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-300">Live Chat</p>
+            <div className="max-h-44 sm:max-h-56 overflow-y-auto space-y-1.5 pr-1">
+              {fullMessages.length === 0 ? (
+                <p className="text-xs text-zinc-400">No chat yet.</p>
+              ) : (
+                fullMessages.map((item) => (
+                  <div key={item.id} className="rounded-xl border border-white/10 bg-black/30 px-2.5 py-2">
+                    <p className="text-[11px] text-zinc-300 font-medium truncate">
+                      {formatSender(item.senderName, item.senderIdentity)}
+                    </p>
+                    <p className="text-xs text-zinc-100 break-words">{item.message}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          <form onSubmit={submitMessage}>
+            <div className="flex items-center gap-2 rounded-2xl border border-white/20 bg-black/35 backdrop-blur-md p-2">
+              <Input
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                placeholder="Write a comment..."
+                maxLength={500}
+                disabled={isSending}
+                className="h-10 bg-zinc-900/70 border-zinc-700 text-sm min-w-0"
+                onKeyDown={(event) => event.stopPropagation()}
+                onKeyUp={(event) => event.stopPropagation()}
+              />
+              <Button
+                type="submit"
+                disabled={isSending || message.trim().length === 0}
+                className="h-10 px-3"
+                aria-label="Send message"
+              >
+                <SendHorizontal className="h-4 w-4" />
+              </Button>
+            </div>
+          </form>
         </div>
-      </form>
+      )}
     </div>
   );
 }
