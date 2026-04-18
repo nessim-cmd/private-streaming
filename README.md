@@ -1,36 +1,167 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PrivateLive
 
-## Getting Started
+PrivateLive is a private live-streaming platform built with Next.js, LiveKit, Clerk, and Prisma.
 
-First, run the development server:
+Hosts can create rooms, go live, invite participants, approve or reject join requests, and chat in real time with persistent room message history.
+
+## Features
+
+- Private rooms with host ownership
+- Real-time video and chat with LiveKit
+- Host-controlled participant approval and rejection
+- In-room sharing (invite links, QR code, email)
+- Persistent room chat history via PostgreSQL + Prisma
+- Responsive UI (mobile and desktop)
+- PWA support (installable app)
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Clerk authentication
+- LiveKit (SFU + tokens)
+- Prisma + PostgreSQL
+- Resend (email invites)
+- Tailwind CSS + Framer Motion
+
+## Project Structure
+
+```text
+app/                    # App Router pages and API routes
+components/             # UI and feature components
+lib/                    # Shared services (db, livekit, resend)
+prisma/                 # Prisma schema and migrations
+public/                 # Static assets + service worker
+```
+
+## Prerequisites
+
+Before running locally, make sure you have:
+
+- Node.js 20+
+- npm 10+
+- Docker Desktop (for local PostgreSQL via docker-compose)
+- A Clerk application
+- A LiveKit Cloud project (or self-hosted LiveKit)
+- A Resend API key (for invite emails)
+
+## Step-by-Step Local Setup
+
+### 1. Clone repository
+
+```bash
+git clone https://github.com/nessim-cmd/private-streaming.git
+cd private-streaming
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Create environment file
+
+Copy the example file and fill in your own values:
+
+```bash
+cp .env.example .env
+```
+
+On Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+### 4. Start PostgreSQL with Docker
+
+```bash
+docker compose up -d
+```
+
+By default, this runs PostgreSQL at `localhost:5433`.
+
+### 5. Prepare Prisma
+
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
+### 6. Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See `.env.example` for the complete list.
 
-## Learn More
+Required variables:
 
-To learn more about Next.js, take a look at the following resources:
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
+- `CLERK_WEBHOOK_SIGNING_SECRET`
+- `LIVEKIT_URL`
+- `LIVEKIT_API_KEY`
+- `LIVEKIT_API_SECRET`
+- `NEXT_PUBLIC_LIVEKIT_URL`
+- `DATABASE_URL`
+- `RESEND_API_KEY`
+- `NEXT_PUBLIC_APP_URL`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Recommended extras:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `RESEND_FROM_EMAIL`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL`
 
-## Deploy on Vercel
+## Common Commands
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev      # start local dev server
+npm run lint     # run ESLint
+npm run build    # production build
+npm run start    # run production server
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy to Vercel
+
+1. Push your code to GitHub.
+2. Import the repository in Vercel.
+3. Add all environment variables from `.env.example` in Vercel Project Settings.
+4. Set `NEXT_PUBLIC_APP_URL` to your production domain.
+5. Deploy.
+
+## Troubleshooting
+
+### Build fails with environment errors
+
+- Verify all required env vars are present in `.env` (local) or Vercel (production).
+
+### Cannot join room as participant
+
+- Participant must be signed in.
+- Host must approve request first.
+- If rejected, participant will see a rejection message and cannot enter.
+
+### Invite says sent but not received
+
+- Check Resend domain verification and sender address.
+- Check spam folder and mail provider filtering.
+
+## Security Notes
+
+- Never commit real secrets to Git.
+- Keep `LIVEKIT_API_SECRET`, `CLERK_SECRET_KEY`, and `RESEND_API_KEY` server-only.
+- Rotate keys immediately if they are exposed.
+
+## License
+
+This project is private and intended for internal use unless stated otherwise.
