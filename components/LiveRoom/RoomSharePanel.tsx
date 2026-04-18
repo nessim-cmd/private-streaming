@@ -17,6 +17,8 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
   const [isInviting, setIsInviting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isShared, setIsShared] = useState(false);
+  const [inviteFeedback, setInviteFeedback] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
 
   const shareableLink = useMemo(() => {
     if (typeof window === "undefined") {
@@ -74,6 +76,8 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
     }
 
     setIsInviting(true);
+    setInviteFeedback(null);
+    setInviteError(null);
     try {
       const response = await fetch("/api/invite", {
         method: "POST",
@@ -83,10 +87,17 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
       const payload = await response.json();
 
       if (response.ok) {
+        const messageId = typeof payload?.messageId === "string" ? payload.messageId : null;
+        setInviteFeedback(messageId ? `Invite sent. Message ID: ${messageId}` : "Invite sent successfully.");
         setEmail("");
       } else {
-        console.error("Invite email failed:", payload?.error ?? "Unknown error");
+        const errorMessage = typeof payload?.error === "string" ? payload.error : "Invite failed.";
+        setInviteError(errorMessage);
+        console.error("Invite email failed:", errorMessage);
       }
+    } catch (error) {
+      setInviteError("Network error while sending invite.");
+      console.error("Invite email failed:", error);
     } finally {
       setIsInviting(false);
     }
@@ -147,6 +158,9 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
                 {isInviting ? "Sending..." : "Send Invite"}
               </Button>
             </div>
+
+            {inviteFeedback && <p className="text-xs text-emerald-400">{inviteFeedback}</p>}
+            {inviteError && <p className="text-xs text-red-400">{inviteError}</p>}
           </form>
         </div>
       </div>

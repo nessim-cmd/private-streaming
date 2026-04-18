@@ -16,6 +16,8 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
   const [email, setEmail] = useState("");
   const [isInviting, setIsInviting] = useState(false);
   const [isInvited, setIsInvited] = useState(false);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviteInfo, setInviteInfo] = useState<string | null>(null);
   const fullLink = typeof window !== "undefined" ? window.location.origin + shareableLink : shareableLink;
 
   const copyToClipboard = () => {
@@ -27,6 +29,8 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
     if (!email) return;
     
     setIsInviting(true);
+    setInviteError(null);
+    setInviteInfo(null);
     try {
       const res = await fetch("/api/invite", {
         method: "POST",
@@ -37,12 +41,17 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
 
       if (res.ok) {
         setIsInvited(true);
+        const messageId = typeof payload?.messageId === "string" ? payload.messageId : null;
+        setInviteInfo(messageId ? `Sent. ID: ${messageId}` : "Invitation sent.");
         setEmail("");
         setTimeout(() => setIsInvited(false), 3000);
       } else {
-        console.error("Invite email failed:", payload?.error ?? "Unknown error");
+        const errorMessage = typeof payload?.error === "string" ? payload.error : "Invite failed.";
+        setInviteError(errorMessage);
+        console.error("Invite email failed:", errorMessage);
       }
     } catch (error) {
+      setInviteError("Network error while sending invite.");
       console.error("Failed to send invite:", error);
     } finally {
       setIsInviting(false);
@@ -92,18 +101,22 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
           {/* Invite Guests */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Invite via Email</label>
-            <form onSubmit={sendInvite} className="flex flex-col sm:flex-row gap-2">
-              <Input 
-                type="email" 
-                placeholder="friend@example.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 h-9 bg-zinc-900/50"
-              />
-              <Button type="submit" size="sm" disabled={isInviting || !email} className="shrink-0 gap-2 w-full sm:w-auto">
-                {isInviting ? <Loader2 className="h-4 w-4 animate-spin" /> : isInvited ? <Check className="h-4 w-4" /> : <Mail className="h-4 w-4" />}
-                {isInvited ? "Sent!" : "Invite"}
-              </Button>
+            <form onSubmit={sendInvite} className="space-y-2">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input 
+                  type="email" 
+                  placeholder="friend@example.com" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 h-9 bg-zinc-900/50"
+                />
+                <Button type="submit" size="sm" disabled={isInviting || !email} className="shrink-0 gap-2 w-full sm:w-auto">
+                  {isInviting ? <Loader2 className="h-4 w-4 animate-spin" /> : isInvited ? <Check className="h-4 w-4" /> : <Mail className="h-4 w-4" />}
+                  {isInvited ? "Sent!" : "Invite"}
+                </Button>
+              </div>
+              {inviteInfo && <p className="text-xs text-emerald-400">{inviteInfo}</p>}
+              {inviteError && <p className="text-xs text-red-400">{inviteError}</p>}
             </form>
           </div>
           
