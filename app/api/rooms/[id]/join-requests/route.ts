@@ -138,6 +138,10 @@ export async function POST(
       return Response.json({ status: 'pending', requestId: latestRequest.id });
     }
 
+    if (latestRequest?.status === 'rejected') {
+      return Response.json({ status: 'rejected', requestId: latestRequest.id });
+    }
+
     const created = await db.invitation.create({
       data: {
         roomId: room.id,

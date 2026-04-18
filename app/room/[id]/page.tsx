@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, use } from "react";
+import { useCallback, useEffect, useState, use } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/Button";
 import { StreamEnded } from "@/components/LiveRoom/StreamEnded";
 import { VideoConference } from "@/components/LiveRoom/VideoConference";
 import { RoomSharePanel } from "@/components/LiveRoom/RoomSharePanel";
 import { RoomMessageHistory } from "@/components/LiveRoom/RoomMessageHistory";
-import { Bell, CheckCircle2, ChevronLeft, Loader2, Users, Video } from "lucide-react";
+import { Bell, CheckCircle2, ChevronLeft, Loader2, Users, Video, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface Room {
@@ -25,7 +25,7 @@ interface JoinRequest {
   createdAt: string;
 }
 
-type AccessStatus = "unknown" | "signin-required" | "not-requested" | "pending" | "approved";
+type AccessStatus = "unknown" | "signin-required" | "not-requested" | "pending" | "approved" | "rejected";
 
 export default function RoomPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -41,7 +41,8 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
   const [accessStatus, setAccessStatus] = useState<AccessStatus>("unknown");
   const [requestingAccess, setRequestingAccess] = useState(false);
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
-  const [approvingRequestId, setApprovingRequestId] = useState<string | null>(null);
+  const [actingRequestId, setActingRequestId] = useState<string | null>(null);
+  const [actingRequestAction, setActingRequestAction] = useState<"approve" | "reject" | null>(null);
   const [hostNotice, setHostNotice] = useState("");
 
   const router = useRouter();
@@ -85,6 +86,27 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
     loadMyStatus();
   }, [id, isHost, isSignedIn, isUserLoaded, loading, room]);
+
+  useEffect(() => {
+    if (isHost || !room?.isActive || token || accessStatus !== "pending") {
+      return;
+    }
+
+    const refreshStatus = async () => {
+      try {
+        const response = await fetch(`/api/rooms/${id}/join-requests/me`);
+        const data = await response.json();
+        if (typeof data.status === "string") {
+          setAccessStatus(data.status as AccessStatus);
+        }
+      } catch (error) {
+        console.error("Failed to refresh join status:", error);
+      }
+    };
+
+    const interval = window.setInterval(refreshStatus, 3000);
+    return () => window.clearInterval(interval);
+  }, [accessStatus, id, isHost, room?.isActive, token]);
 
   useEffect(() => {
     if (!isHost || !token || !room?.isActive) {
@@ -179,19 +201,22 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
-  const approveRequest = async (requestId: string) => {
-    setApprovingRequestId(requestId);
+  const handleRequestDecision = async (requestId: string, action: "approve" | "reject") => {
+    setActingRequestId(requestId);
+    setActingRequestAction(action);
+
     try {
-      await fetch(`/api/rooms/${id}/join-requests/${requestId}/approve`, { method: "POST" });
+      await fetch(`/api/rooms/${id}/join-requests/${requestId}/${action}`, { method: "POST" });
       setJoinRequests((previous) => previous.filter((request) => request.id !== requestId));
     } catch (error) {
-      console.error("Failed to approve request:", error);
+      console.error(`Failed to ${action} request:`, error);
     } finally {
-      setApprovingRequestId(null);
+      setActingRequestId(null);
+      setActingRequestAction(null);
     }
   };
 
-  const joinRoom = async () => {
+  const joinRoom = useCallback(async () => {
     setJoining(true);
     try {
       const res = await fetch("/api/livekit/token", {
@@ -202,6 +227,8 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
       const data = await res.json();
       if (res.ok && data.token) {
         setToken(data.token);
+      } else if (data.code === "REQUEST_REJECTED") {
+        setAccessStatus("rejected");
       } else if (data.code === "APPROVAL_REQUIRED") {
         setAccessStatus("pending");
       }
@@ -210,7 +237,15 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
     } finally {
       setJoining(false);
     }
-  };
+  }, [id, isHost]);
+
+  useEffect(() => {
+    if (isHost || accessStatus !== "approved" || joining || token || !room?.isActive) {
+      return;
+    }
+
+    void joinRoom();
+  }, [accessStatus, isHost, joining, joinRoom, room?.isActive, token]);
 
   const reopenRoom = async () => {
     if (!isHost || !room || room.isActive) {
@@ -325,14 +360,33 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                 {joinRequests.map((request) => (
                   <div key={request.id} className="flex items-center justify-between bg-black/25 rounded-lg px-3 py-2">
                     <div className="text-sm text-zinc-200">{request.email}</div>
-                    <Button
-                      size="sm"
-                      onClick={() => approveRequest(request.id)}
-                      disabled={approvingRequestId === request.id}
-                      className="h-8 px-3"
-                    >
-                      {approvingRequestId === request.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Approve"}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleRequestDecision(request.id, "approve")}
+                        disabled={actingRequestId === request.id}
+                        className="h-8 px-3"
+                      >
+                        {actingRequestId === request.id && actingRequestAction === "approve" ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          "Approve"
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRequestDecision(request.id, "reject")}
+                        disabled={actingRequestId === request.id}
+                        className="h-8 px-3 border-red-400/40 text-red-200 hover:bg-red-500/10"
+                      >
+                        {actingRequestId === request.id && actingRequestAction === "reject" ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          "Reject"
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -445,7 +499,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                         <div className="space-y-2">
                           <h2 className="text-2xl font-bold text-white">Waiting for host approval</h2>
                           <p className="text-muted-foreground">
-                            Your request is pending. We will let you in once the host approves.
+                            Your request is pending. This page auto-refreshes and will join automatically once approved.
                           </p>
                         </div>
                         <Button
@@ -460,6 +514,23 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                           className="w-full h-11"
                         >
                           Refresh Status
+                        </Button>
+                      </>
+                    )}
+
+                    {accessStatus === "rejected" && (
+                      <>
+                        <div className="space-y-2">
+                          <div className="mx-auto h-10 w-10 rounded-full bg-red-500/15 text-red-300 flex items-center justify-center">
+                            <XCircle className="h-5 w-5" />
+                          </div>
+                          <h2 className="text-2xl font-bold text-white">Request rejected</h2>
+                          <p className="text-muted-foreground">
+                            You are rejected to enter this room.
+                          </p>
+                        </div>
+                        <Button variant="outline" onClick={() => router.push("/dashboard")} className="w-full h-11">
+                          Return to Dashboard
                         </Button>
                       </>
                     )}

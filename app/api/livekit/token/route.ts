@@ -80,6 +80,24 @@ export async function POST(req: Request): Promise<Response> {
       });
 
       if (!approvedRequest) {
+        const rejectedRequest = await db.invitation.findFirst({
+          where: {
+            roomId: room.id,
+            email,
+            status: 'rejected',
+          },
+          select: { id: true },
+        });
+
+        if (rejectedRequest) {
+          return Response.json(
+            { error: 'You were rejected and cannot join this room.', code: 'REQUEST_REJECTED' },
+            { status: 403 },
+          );
+        }
+      }
+
+      if (!approvedRequest) {
         return Response.json(
           { error: 'Host approval is required before joining this room.', code: 'APPROVAL_REQUIRED' },
           { status: 403 },
