@@ -55,17 +55,20 @@ export async function POST(
         s3Endpoint = `https://${s3Endpoint}`;
       }
 
-      // Structure for modern LiveKit SDK Egress
+      // Structure for modern LiveKit SDK Egress (case/value pattern)
       const output = {
-        file: {
-          fileType: EncodedFileType.MP4,
-          filepath: filepath,
-          s3: {
-            endpoint: s3Endpoint,
-            accessKey: process.env.S3_ACCESS_KEY_ID || "",
-            secret: process.env.S3_SECRET_ACCESS_KEY || "",
-            bucket: process.env.S3_BUCKET_NAME || "",
-          },
+        output: {
+          case: 'file',
+          value: {
+            fileType: EncodedFileType.MP4,
+            filepath: filepath,
+            s3: {
+              endpoint: s3Endpoint,
+              accessKey: process.env.S3_ACCESS_KEY_ID || "",
+              secret: process.env.S3_SECRET_ACCESS_KEY || "",
+              bucket: process.env.S3_BUCKET_NAME || "",
+            },
+          }
         }
       } as any;
 
