@@ -57,14 +57,16 @@ export async function POST(
 
       // Structure for modern LiveKit SDK Egress
       const output = {
-        fileType: EncodedFileType.MP4,
-        filepath: filepath,
-        s3: {
-          endpoint: s3Endpoint,
-          accessKey: process.env.S3_ACCESS_KEY_ID || "",
-          secret: process.env.S3_SECRET_ACCESS_KEY || "",
-          bucket: process.env.S3_BUCKET_NAME || "",
-        },
+        file: {
+          fileType: EncodedFileType.MP4,
+          filepath: filepath,
+          s3: {
+            endpoint: s3Endpoint,
+            accessKey: process.env.S3_ACCESS_KEY_ID || "",
+            secret: process.env.S3_SECRET_ACCESS_KEY || "",
+            bucket: process.env.S3_BUCKET_NAME || "",
+          },
+        }
       } as any;
 
       const info = await egressClient.startRoomCompositeEgress(room.liveKitRoomId, output, {
