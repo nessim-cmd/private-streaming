@@ -1,25 +1,17 @@
 import { SignUp } from '@clerk/nextjs';
-import { dark } from '@clerk/themes';
 
 export default function Page() {
   return (
-    <div className="flex-1 flex items-center justify-center p-4 sm:p-6">
+    <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden bg-[#0c0c10]">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,_rgba(124,58,237,0.15),_transparent_50%)] -z-10" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 blur-[140px] -z-10 rounded-full animate-pulse" />
+      
       <SignUp 
         appearance={{
-          baseTheme: dark,
           elements: {
             rootBox: "w-full flex justify-center",
             cardBox: "w-full max-w-md",
-            card: "w-full bg-zinc-900/95 border border-white/20 shadow-[0_24px_80px_rgba(0,0,0,0.55)] rounded-2xl",
-            headerTitle: "text-white font-bold",
-            headerSubtitle: "text-zinc-300",
-            socialButtonsBlockButton: "bg-zinc-800/90 border border-white/15 text-zinc-100 hover:bg-zinc-700 transition-colors",
-            formFieldInput: "bg-zinc-800/90 border border-white/20 text-zinc-100 placeholder:text-zinc-400",
-            formFieldLabel: "text-zinc-200",
-            formButtonPrimary: "bg-primary hover:opacity-90 text-white transition-opacity",
-            footerActionLink: "text-primary hover:text-primary/80",
-            identityPreviewText: "text-zinc-300",
-            identityPreviewEditButton: "text-primary",
           }
         }}
       />

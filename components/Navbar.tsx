@@ -36,6 +36,12 @@ export function Navbar() {
               >
                 {t('dashboard_title')}
               </Link>
+              <Link 
+                href="/recordings" 
+                className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block"
+              >
+                Recordings
+              </Link>
               <UserButton 
                 appearance={{
                   elements: {

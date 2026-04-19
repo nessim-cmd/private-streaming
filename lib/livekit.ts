@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { AccessToken, RoomServiceClient } from 'livekit-server-sdk';
+import { AccessToken, RoomServiceClient, EgressClient } from 'livekit-server-sdk';
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -63,4 +63,12 @@ export function getRoomServiceClient(): RoomServiceClient {
   const liveKitUrl = requireAnyEnv(['LIVEKIT_URL', 'NEXT_PUBLIC_LIVEKIT_URL']);
 
   return new RoomServiceClient(toHttpLiveKitUrl(liveKitUrl), apiKey, apiSecret);
+}
+
+export function getEgressClient(): EgressClient {
+  const apiKey = requireEnv('LIVEKIT_API_KEY');
+  const apiSecret = requireEnv('LIVEKIT_API_SECRET');
+  const liveKitUrl = requireAnyEnv(['LIVEKIT_URL', 'NEXT_PUBLIC_LIVEKIT_URL']);
+
+  return new EgressClient(toHttpLiveKitUrl(liveKitUrl), apiKey, apiSecret);
 }

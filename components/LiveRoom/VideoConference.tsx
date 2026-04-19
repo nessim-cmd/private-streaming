@@ -37,11 +37,66 @@ export function VideoConference({ token, isHost, hostIdentity, roomId }: VideoCo
         <LiveOverlayFeed roomId={roomId} />
       </section>
 
-      <div className="border-t border-white/5 bg-zinc-900/80 backdrop-blur-2xl px-4 py-4 sm:px-8">
+      <div className="border-t border-white/5 bg-zinc-900/80 backdrop-blur-2xl px-4 py-4 sm:px-8 flex items-center justify-between">
         <ControlBar variation="minimal" className="!bg-transparent !border-0" />
+        
+        {isHost && (
+          <RecordingButton roomId={roomId} />
+        )}
       </div>
       <RoomAudioRenderer />
     </LiveKitRoom>
+  );
+}
+
+function RecordingButton({ roomId }: { roomId: string }) {
+  const [isRecording, setIsRecording] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    fetch(`/api/rooms/${roomId}/record`)
+      .then(res => res.json())
+      .then(data => {
+        setIsRecording(data.isRecording);
+        setLoading(false);
+      });
+  }, [roomId]);
+
+  const toggleRecording = async () => {
+    setLoading(true);
+    try {
+      const action = isRecording ? "stop" : "start";
+      const res = await fetch(`/api/rooms/${roomId}/record`, {
+        method: "POST",
+        body: JSON.stringify({ action }),
+      });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "Failed to toggle recording");
+      } else {
+        setIsRecording(!isRecording);
+      }
+    } catch (error) {
+      console.error("Recording error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={toggleRecording}
+      disabled={loading}
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all ${
+        isRecording 
+          ? "bg-red-500/20 text-red-500 border border-red-500/30 animate-pulse" 
+          : "bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10 hover:text-white"
+      }`}
+    >
+      <div className={`h-2 w-2 rounded-full ${isRecording ? "bg-red-500" : "bg-zinc-600"}`} />
+      {loading ? "..." : isRecording ? "STOP SAVE" : "START SAVE LIVE"}
+    </button>
   );
 }
 

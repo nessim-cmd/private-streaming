@@ -24,6 +24,11 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type Room = $Result.DefaultSelection<Prisma.$RoomPayload>
 /**
+ * Model Recording
+ * 
+ */
+export type Recording = $Result.DefaultSelection<Prisma.$RecordingPayload>
+/**
  * Model Invitation
  * 
  */
@@ -179,6 +184,16 @@ export class PrismaClient<
     * ```
     */
   get room(): Prisma.RoomDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.recording`: Exposes CRUD operations for the **Recording** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Recordings
+    * const recordings = await prisma.recording.findMany()
+    * ```
+    */
+  get recording(): Prisma.RecordingDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.invitation`: Exposes CRUD operations for the **Invitation** model.
@@ -645,6 +660,7 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     Room: 'Room',
+    Recording: 'Recording',
     Invitation: 'Invitation',
     Participant: 'Participant',
     RoomMessage: 'RoomMessage'
@@ -663,7 +679,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "room" | "invitation" | "participant" | "roomMessage"
+      modelProps: "user" | "room" | "recording" | "invitation" | "participant" | "roomMessage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -812,6 +828,80 @@ export namespace Prisma {
           count: {
             args: Prisma.RoomCountArgs<ExtArgs>
             result: $Utils.Optional<RoomCountAggregateOutputType> | number
+          }
+        }
+      }
+      Recording: {
+        payload: Prisma.$RecordingPayload<ExtArgs>
+        fields: Prisma.RecordingFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RecordingFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RecordingFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          findFirst: {
+            args: Prisma.RecordingFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RecordingFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          findMany: {
+            args: Prisma.RecordingFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+          }
+          create: {
+            args: Prisma.RecordingCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          createMany: {
+            args: Prisma.RecordingCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RecordingCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+          }
+          delete: {
+            args: Prisma.RecordingDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          update: {
+            args: Prisma.RecordingUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          deleteMany: {
+            args: Prisma.RecordingDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RecordingUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RecordingUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+          }
+          upsert: {
+            args: Prisma.RecordingUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecordingPayload>
+          }
+          aggregate: {
+            args: Prisma.RecordingAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRecording>
+          }
+          groupBy: {
+            args: Prisma.RecordingGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RecordingGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RecordingCountArgs<ExtArgs>
+            result: $Utils.Optional<RecordingCountAggregateOutputType> | number
           }
         }
       }
@@ -1147,6 +1237,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     user?: UserOmit
     room?: RoomOmit
+    recording?: RecordingOmit
     invitation?: InvitationOmit
     participant?: ParticipantOmit
     roomMessage?: RoomMessageOmit
@@ -1282,12 +1373,14 @@ export namespace Prisma {
     invitations: number
     participants: number
     messages: number
+    recordings: number
   }
 
   export type RoomCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     invitations?: boolean | RoomCountOutputTypeCountInvitationsArgs
     participants?: boolean | RoomCountOutputTypeCountParticipantsArgs
     messages?: boolean | RoomCountOutputTypeCountMessagesArgs
+    recordings?: boolean | RoomCountOutputTypeCountRecordingsArgs
   }
 
   // Custom InputTypes
@@ -1320,6 +1413,13 @@ export namespace Prisma {
    */
   export type RoomCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RoomMessageWhereInput
+  }
+
+  /**
+   * RoomCountOutputType without action
+   */
+  export type RoomCountOutputTypeCountRecordingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecordingWhereInput
   }
 
 
@@ -2629,6 +2729,7 @@ export namespace Prisma {
     invitations?: boolean | Room$invitationsArgs<ExtArgs>
     participants?: boolean | Room$participantsArgs<ExtArgs>
     messages?: boolean | Room$messagesArgs<ExtArgs>
+    recordings?: boolean | Room$recordingsArgs<ExtArgs>
     _count?: boolean | RoomCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["room"]>
 
@@ -2670,6 +2771,7 @@ export namespace Prisma {
     invitations?: boolean | Room$invitationsArgs<ExtArgs>
     participants?: boolean | Room$participantsArgs<ExtArgs>
     messages?: boolean | Room$messagesArgs<ExtArgs>
+    recordings?: boolean | Room$recordingsArgs<ExtArgs>
     _count?: boolean | RoomCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RoomIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2686,6 +2788,7 @@ export namespace Prisma {
       invitations: Prisma.$InvitationPayload<ExtArgs>[]
       participants: Prisma.$ParticipantPayload<ExtArgs>[]
       messages: Prisma.$RoomMessagePayload<ExtArgs>[]
+      recordings: Prisma.$RecordingPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3093,6 +3196,7 @@ export namespace Prisma {
     invitations<T extends Room$invitationsArgs<ExtArgs> = {}>(args?: Subset<T, Room$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     participants<T extends Room$participantsArgs<ExtArgs> = {}>(args?: Subset<T, Room$participantsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParticipantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     messages<T extends Room$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Room$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RoomMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    recordings<T extends Room$recordingsArgs<ExtArgs> = {}>(args?: Subset<T, Room$recordingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3602,6 +3706,30 @@ export namespace Prisma {
   }
 
   /**
+   * Room.recordings
+   */
+  export type Room$recordingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    where?: RecordingWhereInput
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    cursor?: RecordingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
    * Room without action
    */
   export type RoomDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3617,6 +3745,1095 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: RoomInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Recording
+   */
+
+  export type AggregateRecording = {
+    _count: RecordingCountAggregateOutputType | null
+    _min: RecordingMinAggregateOutputType | null
+    _max: RecordingMaxAggregateOutputType | null
+  }
+
+  export type RecordingMinAggregateOutputType = {
+    id: string | null
+    roomId: string | null
+    egressId: string | null
+    key: string | null
+    url: string | null
+    status: string | null
+    createdAt: Date | null
+  }
+
+  export type RecordingMaxAggregateOutputType = {
+    id: string | null
+    roomId: string | null
+    egressId: string | null
+    key: string | null
+    url: string | null
+    status: string | null
+    createdAt: Date | null
+  }
+
+  export type RecordingCountAggregateOutputType = {
+    id: number
+    roomId: number
+    egressId: number
+    key: number
+    url: number
+    status: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RecordingMinAggregateInputType = {
+    id?: true
+    roomId?: true
+    egressId?: true
+    key?: true
+    url?: true
+    status?: true
+    createdAt?: true
+  }
+
+  export type RecordingMaxAggregateInputType = {
+    id?: true
+    roomId?: true
+    egressId?: true
+    key?: true
+    url?: true
+    status?: true
+    createdAt?: true
+  }
+
+  export type RecordingCountAggregateInputType = {
+    id?: true
+    roomId?: true
+    egressId?: true
+    key?: true
+    url?: true
+    status?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RecordingAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Recording to aggregate.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Recordings
+    **/
+    _count?: true | RecordingCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RecordingMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RecordingMaxAggregateInputType
+  }
+
+  export type GetRecordingAggregateType<T extends RecordingAggregateArgs> = {
+        [P in keyof T & keyof AggregateRecording]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRecording[P]>
+      : GetScalarType<T[P], AggregateRecording[P]>
+  }
+
+
+
+
+  export type RecordingGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecordingWhereInput
+    orderBy?: RecordingOrderByWithAggregationInput | RecordingOrderByWithAggregationInput[]
+    by: RecordingScalarFieldEnum[] | RecordingScalarFieldEnum
+    having?: RecordingScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RecordingCountAggregateInputType | true
+    _min?: RecordingMinAggregateInputType
+    _max?: RecordingMaxAggregateInputType
+  }
+
+  export type RecordingGroupByOutputType = {
+    id: string
+    roomId: string
+    egressId: string
+    key: string | null
+    url: string | null
+    status: string
+    createdAt: Date
+    _count: RecordingCountAggregateOutputType | null
+    _min: RecordingMinAggregateOutputType | null
+    _max: RecordingMaxAggregateOutputType | null
+  }
+
+  type GetRecordingGroupByPayload<T extends RecordingGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RecordingGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RecordingGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RecordingGroupByOutputType[P]>
+            : GetScalarType<T[P], RecordingGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RecordingSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roomId?: boolean
+    egressId?: boolean
+    key?: boolean
+    url?: boolean
+    status?: boolean
+    createdAt?: boolean
+    room?: boolean | RoomDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recording"]>
+
+  export type RecordingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roomId?: boolean
+    egressId?: boolean
+    key?: boolean
+    url?: boolean
+    status?: boolean
+    createdAt?: boolean
+    room?: boolean | RoomDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recording"]>
+
+  export type RecordingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    roomId?: boolean
+    egressId?: boolean
+    key?: boolean
+    url?: boolean
+    status?: boolean
+    createdAt?: boolean
+    room?: boolean | RoomDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recording"]>
+
+  export type RecordingSelectScalar = {
+    id?: boolean
+    roomId?: boolean
+    egressId?: boolean
+    key?: boolean
+    url?: boolean
+    status?: boolean
+    createdAt?: boolean
+  }
+
+  export type RecordingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "roomId" | "egressId" | "key" | "url" | "status" | "createdAt", ExtArgs["result"]["recording"]>
+  export type RecordingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    room?: boolean | RoomDefaultArgs<ExtArgs>
+  }
+  export type RecordingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    room?: boolean | RoomDefaultArgs<ExtArgs>
+  }
+  export type RecordingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    room?: boolean | RoomDefaultArgs<ExtArgs>
+  }
+
+  export type $RecordingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Recording"
+    objects: {
+      room: Prisma.$RoomPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      roomId: string
+      egressId: string
+      key: string | null
+      url: string | null
+      status: string
+      createdAt: Date
+    }, ExtArgs["result"]["recording"]>
+    composites: {}
+  }
+
+  type RecordingGetPayload<S extends boolean | null | undefined | RecordingDefaultArgs> = $Result.GetResult<Prisma.$RecordingPayload, S>
+
+  type RecordingCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RecordingFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RecordingCountAggregateInputType | true
+    }
+
+  export interface RecordingDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Recording'], meta: { name: 'Recording' } }
+    /**
+     * Find zero or one Recording that matches the filter.
+     * @param {RecordingFindUniqueArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RecordingFindUniqueArgs>(args: SelectSubset<T, RecordingFindUniqueArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Recording that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RecordingFindUniqueOrThrowArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RecordingFindUniqueOrThrowArgs>(args: SelectSubset<T, RecordingFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Recording that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingFindFirstArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RecordingFindFirstArgs>(args?: SelectSubset<T, RecordingFindFirstArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Recording that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingFindFirstOrThrowArgs} args - Arguments to find a Recording
+     * @example
+     * // Get one Recording
+     * const recording = await prisma.recording.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RecordingFindFirstOrThrowArgs>(args?: SelectSubset<T, RecordingFindFirstOrThrowArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Recordings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Recordings
+     * const recordings = await prisma.recording.findMany()
+     * 
+     * // Get first 10 Recordings
+     * const recordings = await prisma.recording.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const recordingWithIdOnly = await prisma.recording.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RecordingFindManyArgs>(args?: SelectSubset<T, RecordingFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Recording.
+     * @param {RecordingCreateArgs} args - Arguments to create a Recording.
+     * @example
+     * // Create one Recording
+     * const Recording = await prisma.recording.create({
+     *   data: {
+     *     // ... data to create a Recording
+     *   }
+     * })
+     * 
+     */
+    create<T extends RecordingCreateArgs>(args: SelectSubset<T, RecordingCreateArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Recordings.
+     * @param {RecordingCreateManyArgs} args - Arguments to create many Recordings.
+     * @example
+     * // Create many Recordings
+     * const recording = await prisma.recording.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RecordingCreateManyArgs>(args?: SelectSubset<T, RecordingCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Recordings and returns the data saved in the database.
+     * @param {RecordingCreateManyAndReturnArgs} args - Arguments to create many Recordings.
+     * @example
+     * // Create many Recordings
+     * const recording = await prisma.recording.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Recordings and only return the `id`
+     * const recordingWithIdOnly = await prisma.recording.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RecordingCreateManyAndReturnArgs>(args?: SelectSubset<T, RecordingCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Recording.
+     * @param {RecordingDeleteArgs} args - Arguments to delete one Recording.
+     * @example
+     * // Delete one Recording
+     * const Recording = await prisma.recording.delete({
+     *   where: {
+     *     // ... filter to delete one Recording
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RecordingDeleteArgs>(args: SelectSubset<T, RecordingDeleteArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Recording.
+     * @param {RecordingUpdateArgs} args - Arguments to update one Recording.
+     * @example
+     * // Update one Recording
+     * const recording = await prisma.recording.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RecordingUpdateArgs>(args: SelectSubset<T, RecordingUpdateArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Recordings.
+     * @param {RecordingDeleteManyArgs} args - Arguments to filter Recordings to delete.
+     * @example
+     * // Delete a few Recordings
+     * const { count } = await prisma.recording.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RecordingDeleteManyArgs>(args?: SelectSubset<T, RecordingDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Recordings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Recordings
+     * const recording = await prisma.recording.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RecordingUpdateManyArgs>(args: SelectSubset<T, RecordingUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Recordings and returns the data updated in the database.
+     * @param {RecordingUpdateManyAndReturnArgs} args - Arguments to update many Recordings.
+     * @example
+     * // Update many Recordings
+     * const recording = await prisma.recording.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Recordings and only return the `id`
+     * const recordingWithIdOnly = await prisma.recording.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RecordingUpdateManyAndReturnArgs>(args: SelectSubset<T, RecordingUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Recording.
+     * @param {RecordingUpsertArgs} args - Arguments to update or create a Recording.
+     * @example
+     * // Update or create a Recording
+     * const recording = await prisma.recording.upsert({
+     *   create: {
+     *     // ... data to create a Recording
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Recording we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RecordingUpsertArgs>(args: SelectSubset<T, RecordingUpsertArgs<ExtArgs>>): Prisma__RecordingClient<$Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Recordings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingCountArgs} args - Arguments to filter Recordings to count.
+     * @example
+     * // Count the number of Recordings
+     * const count = await prisma.recording.count({
+     *   where: {
+     *     // ... the filter for the Recordings we want to count
+     *   }
+     * })
+    **/
+    count<T extends RecordingCountArgs>(
+      args?: Subset<T, RecordingCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RecordingCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Recording.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RecordingAggregateArgs>(args: Subset<T, RecordingAggregateArgs>): Prisma.PrismaPromise<GetRecordingAggregateType<T>>
+
+    /**
+     * Group by Recording.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecordingGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RecordingGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RecordingGroupByArgs['orderBy'] }
+        : { orderBy?: RecordingGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RecordingGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRecordingGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Recording model
+   */
+  readonly fields: RecordingFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Recording.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RecordingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    room<T extends RoomDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RoomDefaultArgs<ExtArgs>>): Prisma__RoomClient<$Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Recording model
+   */
+  interface RecordingFieldRefs {
+    readonly id: FieldRef<"Recording", 'String'>
+    readonly roomId: FieldRef<"Recording", 'String'>
+    readonly egressId: FieldRef<"Recording", 'String'>
+    readonly key: FieldRef<"Recording", 'String'>
+    readonly url: FieldRef<"Recording", 'String'>
+    readonly status: FieldRef<"Recording", 'String'>
+    readonly createdAt: FieldRef<"Recording", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Recording findUnique
+   */
+  export type RecordingFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording findUniqueOrThrow
+   */
+  export type RecordingFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording findFirst
+   */
+  export type RecordingFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Recordings.
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recordings.
+     */
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
+   * Recording findFirstOrThrow
+   */
+  export type RecordingFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recording to fetch.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Recordings.
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recordings.
+     */
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
+   * Recording findMany
+   */
+  export type RecordingFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter, which Recordings to fetch.
+     */
+    where?: RecordingWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recordings to fetch.
+     */
+    orderBy?: RecordingOrderByWithRelationInput | RecordingOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Recordings.
+     */
+    cursor?: RecordingWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recordings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recordings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recordings.
+     */
+    distinct?: RecordingScalarFieldEnum | RecordingScalarFieldEnum[]
+  }
+
+  /**
+   * Recording create
+   */
+  export type RecordingCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Recording.
+     */
+    data: XOR<RecordingCreateInput, RecordingUncheckedCreateInput>
+  }
+
+  /**
+   * Recording createMany
+   */
+  export type RecordingCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Recordings.
+     */
+    data: RecordingCreateManyInput | RecordingCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Recording createManyAndReturn
+   */
+  export type RecordingCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * The data used to create many Recordings.
+     */
+    data: RecordingCreateManyInput | RecordingCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Recording update
+   */
+  export type RecordingUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Recording.
+     */
+    data: XOR<RecordingUpdateInput, RecordingUncheckedUpdateInput>
+    /**
+     * Choose, which Recording to update.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording updateMany
+   */
+  export type RecordingUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Recordings.
+     */
+    data: XOR<RecordingUpdateManyMutationInput, RecordingUncheckedUpdateManyInput>
+    /**
+     * Filter which Recordings to update
+     */
+    where?: RecordingWhereInput
+    /**
+     * Limit how many Recordings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recording updateManyAndReturn
+   */
+  export type RecordingUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * The data used to update Recordings.
+     */
+    data: XOR<RecordingUpdateManyMutationInput, RecordingUncheckedUpdateManyInput>
+    /**
+     * Filter which Recordings to update
+     */
+    where?: RecordingWhereInput
+    /**
+     * Limit how many Recordings to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Recording upsert
+   */
+  export type RecordingUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Recording to update in case it exists.
+     */
+    where: RecordingWhereUniqueInput
+    /**
+     * In case the Recording found by the `where` argument doesn't exist, create a new Recording with this data.
+     */
+    create: XOR<RecordingCreateInput, RecordingUncheckedCreateInput>
+    /**
+     * In case the Recording was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RecordingUpdateInput, RecordingUncheckedUpdateInput>
+  }
+
+  /**
+   * Recording delete
+   */
+  export type RecordingDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
+    /**
+     * Filter which Recording to delete.
+     */
+    where: RecordingWhereUniqueInput
+  }
+
+  /**
+   * Recording deleteMany
+   */
+  export type RecordingDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Recordings to delete
+     */
+    where?: RecordingWhereInput
+    /**
+     * Limit how many Recordings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recording without action
+   */
+  export type RecordingDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recording
+     */
+    select?: RecordingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recording
+     */
+    omit?: RecordingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecordingInclude<ExtArgs> | null
   }
 
 
@@ -6926,6 +8143,19 @@ export namespace Prisma {
   export type RoomScalarFieldEnum = (typeof RoomScalarFieldEnum)[keyof typeof RoomScalarFieldEnum]
 
 
+  export const RecordingScalarFieldEnum: {
+    id: 'id',
+    roomId: 'roomId',
+    egressId: 'egressId',
+    key: 'key',
+    url: 'url',
+    status: 'status',
+    createdAt: 'createdAt'
+  };
+
+  export type RecordingScalarFieldEnum = (typeof RecordingScalarFieldEnum)[keyof typeof RecordingScalarFieldEnum]
+
+
   export const InvitationScalarFieldEnum: {
     id: 'id',
     roomId: 'roomId',
@@ -7113,6 +8343,7 @@ export namespace Prisma {
     invitations?: InvitationListRelationFilter
     participants?: ParticipantListRelationFilter
     messages?: RoomMessageListRelationFilter
+    recordings?: RecordingListRelationFilter
   }
 
   export type RoomOrderByWithRelationInput = {
@@ -7127,6 +8358,7 @@ export namespace Prisma {
     invitations?: InvitationOrderByRelationAggregateInput
     participants?: ParticipantOrderByRelationAggregateInput
     messages?: RoomMessageOrderByRelationAggregateInput
+    recordings?: RecordingOrderByRelationAggregateInput
   }
 
   export type RoomWhereUniqueInput = Prisma.AtLeast<{
@@ -7144,6 +8376,7 @@ export namespace Prisma {
     invitations?: InvitationListRelationFilter
     participants?: ParticipantListRelationFilter
     messages?: RoomMessageListRelationFilter
+    recordings?: RecordingListRelationFilter
   }, "id" | "liveKitRoomId">
 
   export type RoomOrderByWithAggregationInput = {
@@ -7170,6 +8403,71 @@ export namespace Prisma {
     isActive?: BoolWithAggregatesFilter<"Room"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Room"> | Date | string
     endedAt?: DateTimeNullableWithAggregatesFilter<"Room"> | Date | string | null
+  }
+
+  export type RecordingWhereInput = {
+    AND?: RecordingWhereInput | RecordingWhereInput[]
+    OR?: RecordingWhereInput[]
+    NOT?: RecordingWhereInput | RecordingWhereInput[]
+    id?: StringFilter<"Recording"> | string
+    roomId?: StringFilter<"Recording"> | string
+    egressId?: StringFilter<"Recording"> | string
+    key?: StringNullableFilter<"Recording"> | string | null
+    url?: StringNullableFilter<"Recording"> | string | null
+    status?: StringFilter<"Recording"> | string
+    createdAt?: DateTimeFilter<"Recording"> | Date | string
+    room?: XOR<RoomScalarRelationFilter, RoomWhereInput>
+  }
+
+  export type RecordingOrderByWithRelationInput = {
+    id?: SortOrder
+    roomId?: SortOrder
+    egressId?: SortOrder
+    key?: SortOrderInput | SortOrder
+    url?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    room?: RoomOrderByWithRelationInput
+  }
+
+  export type RecordingWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    egressId?: string
+    AND?: RecordingWhereInput | RecordingWhereInput[]
+    OR?: RecordingWhereInput[]
+    NOT?: RecordingWhereInput | RecordingWhereInput[]
+    roomId?: StringFilter<"Recording"> | string
+    key?: StringNullableFilter<"Recording"> | string | null
+    url?: StringNullableFilter<"Recording"> | string | null
+    status?: StringFilter<"Recording"> | string
+    createdAt?: DateTimeFilter<"Recording"> | Date | string
+    room?: XOR<RoomScalarRelationFilter, RoomWhereInput>
+  }, "id" | "egressId">
+
+  export type RecordingOrderByWithAggregationInput = {
+    id?: SortOrder
+    roomId?: SortOrder
+    egressId?: SortOrder
+    key?: SortOrderInput | SortOrder
+    url?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    _count?: RecordingCountOrderByAggregateInput
+    _max?: RecordingMaxOrderByAggregateInput
+    _min?: RecordingMinOrderByAggregateInput
+  }
+
+  export type RecordingScalarWhereWithAggregatesInput = {
+    AND?: RecordingScalarWhereWithAggregatesInput | RecordingScalarWhereWithAggregatesInput[]
+    OR?: RecordingScalarWhereWithAggregatesInput[]
+    NOT?: RecordingScalarWhereWithAggregatesInput | RecordingScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Recording"> | string
+    roomId?: StringWithAggregatesFilter<"Recording"> | string
+    egressId?: StringWithAggregatesFilter<"Recording"> | string
+    key?: StringNullableWithAggregatesFilter<"Recording"> | string | null
+    url?: StringNullableWithAggregatesFilter<"Recording"> | string | null
+    status?: StringWithAggregatesFilter<"Recording"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Recording"> | Date | string
   }
 
   export type InvitationWhereInput = {
@@ -7425,6 +8723,7 @@ export namespace Prisma {
     invitations?: InvitationCreateNestedManyWithoutRoomInput
     participants?: ParticipantCreateNestedManyWithoutRoomInput
     messages?: RoomMessageCreateNestedManyWithoutRoomInput
+    recordings?: RecordingCreateNestedManyWithoutRoomInput
   }
 
   export type RoomUncheckedCreateInput = {
@@ -7438,6 +8737,7 @@ export namespace Prisma {
     invitations?: InvitationUncheckedCreateNestedManyWithoutRoomInput
     participants?: ParticipantUncheckedCreateNestedManyWithoutRoomInput
     messages?: RoomMessageUncheckedCreateNestedManyWithoutRoomInput
+    recordings?: RecordingUncheckedCreateNestedManyWithoutRoomInput
   }
 
   export type RoomUpdateInput = {
@@ -7451,6 +8751,7 @@ export namespace Prisma {
     invitations?: InvitationUpdateManyWithoutRoomNestedInput
     participants?: ParticipantUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomUncheckedUpdateInput = {
@@ -7464,6 +8765,7 @@ export namespace Prisma {
     invitations?: InvitationUncheckedUpdateManyWithoutRoomNestedInput
     participants?: ParticipantUncheckedUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUncheckedUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUncheckedUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomCreateManyInput = {
@@ -7493,6 +8795,75 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type RecordingCreateInput = {
+    id?: string
+    egressId: string
+    key?: string | null
+    url?: string | null
+    status?: string
+    createdAt?: Date | string
+    room: RoomCreateNestedOneWithoutRecordingsInput
+  }
+
+  export type RecordingUncheckedCreateInput = {
+    id?: string
+    roomId: string
+    egressId: string
+    key?: string | null
+    url?: string | null
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    room?: RoomUpdateOneRequiredWithoutRecordingsNestedInput
+  }
+
+  export type RecordingUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomId?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingCreateManyInput = {
+    id?: string
+    roomId: string
+    egressId: string
+    key?: string | null
+    url?: string | null
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    roomId?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InvitationCreateInput = {
@@ -7808,12 +9179,22 @@ export namespace Prisma {
     none?: InvitationWhereInput
   }
 
+  export type RecordingListRelationFilter = {
+    every?: RecordingWhereInput
+    some?: RecordingWhereInput
+    none?: RecordingWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
   }
 
   export type InvitationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RecordingOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -7869,9 +9250,72 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type RoomScalarRelationFilter = {
     is?: RoomWhereInput
     isNot?: RoomWhereInput
+  }
+
+  export type RecordingCountOrderByAggregateInput = {
+    id?: SortOrder
+    roomId?: SortOrder
+    egressId?: SortOrder
+    key?: SortOrder
+    url?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecordingMaxOrderByAggregateInput = {
+    id?: SortOrder
+    roomId?: SortOrder
+    egressId?: SortOrder
+    key?: SortOrder
+    url?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecordingMinOrderByAggregateInput = {
+    id?: SortOrder
+    roomId?: SortOrder
+    egressId?: SortOrder
+    key?: SortOrder
+    url?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type InvitationCountOrderByAggregateInput = {
@@ -7896,21 +9340,6 @@ export namespace Prisma {
     email?: SortOrder
     status?: SortOrder
     createdAt?: SortOrder
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type UserNullableScalarRelationFilter = {
@@ -7940,24 +9369,6 @@ export namespace Prisma {
     userId?: SortOrder
     joinedAt?: SortOrder
     leftAt?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type RoomMessageCountOrderByAggregateInput = {
@@ -8151,6 +9562,13 @@ export namespace Prisma {
     connect?: RoomMessageWhereUniqueInput | RoomMessageWhereUniqueInput[]
   }
 
+  export type RecordingCreateNestedManyWithoutRoomInput = {
+    create?: XOR<RecordingCreateWithoutRoomInput, RecordingUncheckedCreateWithoutRoomInput> | RecordingCreateWithoutRoomInput[] | RecordingUncheckedCreateWithoutRoomInput[]
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomInput | RecordingCreateOrConnectWithoutRoomInput[]
+    createMany?: RecordingCreateManyRoomInputEnvelope
+    connect?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+  }
+
   export type InvitationUncheckedCreateNestedManyWithoutRoomInput = {
     create?: XOR<InvitationCreateWithoutRoomInput, InvitationUncheckedCreateWithoutRoomInput> | InvitationCreateWithoutRoomInput[] | InvitationUncheckedCreateWithoutRoomInput[]
     connectOrCreate?: InvitationCreateOrConnectWithoutRoomInput | InvitationCreateOrConnectWithoutRoomInput[]
@@ -8170,6 +9588,13 @@ export namespace Prisma {
     connectOrCreate?: RoomMessageCreateOrConnectWithoutRoomInput | RoomMessageCreateOrConnectWithoutRoomInput[]
     createMany?: RoomMessageCreateManyRoomInputEnvelope
     connect?: RoomMessageWhereUniqueInput | RoomMessageWhereUniqueInput[]
+  }
+
+  export type RecordingUncheckedCreateNestedManyWithoutRoomInput = {
+    create?: XOR<RecordingCreateWithoutRoomInput, RecordingUncheckedCreateWithoutRoomInput> | RecordingCreateWithoutRoomInput[] | RecordingUncheckedCreateWithoutRoomInput[]
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomInput | RecordingCreateOrConnectWithoutRoomInput[]
+    createMany?: RecordingCreateManyRoomInputEnvelope
+    connect?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -8230,6 +9655,20 @@ export namespace Prisma {
     deleteMany?: RoomMessageScalarWhereInput | RoomMessageScalarWhereInput[]
   }
 
+  export type RecordingUpdateManyWithoutRoomNestedInput = {
+    create?: XOR<RecordingCreateWithoutRoomInput, RecordingUncheckedCreateWithoutRoomInput> | RecordingCreateWithoutRoomInput[] | RecordingUncheckedCreateWithoutRoomInput[]
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomInput | RecordingCreateOrConnectWithoutRoomInput[]
+    upsert?: RecordingUpsertWithWhereUniqueWithoutRoomInput | RecordingUpsertWithWhereUniqueWithoutRoomInput[]
+    createMany?: RecordingCreateManyRoomInputEnvelope
+    set?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    disconnect?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    delete?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    connect?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    update?: RecordingUpdateWithWhereUniqueWithoutRoomInput | RecordingUpdateWithWhereUniqueWithoutRoomInput[]
+    updateMany?: RecordingUpdateManyWithWhereWithoutRoomInput | RecordingUpdateManyWithWhereWithoutRoomInput[]
+    deleteMany?: RecordingScalarWhereInput | RecordingScalarWhereInput[]
+  }
+
   export type InvitationUncheckedUpdateManyWithoutRoomNestedInput = {
     create?: XOR<InvitationCreateWithoutRoomInput, InvitationUncheckedCreateWithoutRoomInput> | InvitationCreateWithoutRoomInput[] | InvitationUncheckedCreateWithoutRoomInput[]
     connectOrCreate?: InvitationCreateOrConnectWithoutRoomInput | InvitationCreateOrConnectWithoutRoomInput[]
@@ -8270,6 +9709,38 @@ export namespace Prisma {
     update?: RoomMessageUpdateWithWhereUniqueWithoutRoomInput | RoomMessageUpdateWithWhereUniqueWithoutRoomInput[]
     updateMany?: RoomMessageUpdateManyWithWhereWithoutRoomInput | RoomMessageUpdateManyWithWhereWithoutRoomInput[]
     deleteMany?: RoomMessageScalarWhereInput | RoomMessageScalarWhereInput[]
+  }
+
+  export type RecordingUncheckedUpdateManyWithoutRoomNestedInput = {
+    create?: XOR<RecordingCreateWithoutRoomInput, RecordingUncheckedCreateWithoutRoomInput> | RecordingCreateWithoutRoomInput[] | RecordingUncheckedCreateWithoutRoomInput[]
+    connectOrCreate?: RecordingCreateOrConnectWithoutRoomInput | RecordingCreateOrConnectWithoutRoomInput[]
+    upsert?: RecordingUpsertWithWhereUniqueWithoutRoomInput | RecordingUpsertWithWhereUniqueWithoutRoomInput[]
+    createMany?: RecordingCreateManyRoomInputEnvelope
+    set?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    disconnect?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    delete?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    connect?: RecordingWhereUniqueInput | RecordingWhereUniqueInput[]
+    update?: RecordingUpdateWithWhereUniqueWithoutRoomInput | RecordingUpdateWithWhereUniqueWithoutRoomInput[]
+    updateMany?: RecordingUpdateManyWithWhereWithoutRoomInput | RecordingUpdateManyWithWhereWithoutRoomInput[]
+    deleteMany?: RecordingScalarWhereInput | RecordingScalarWhereInput[]
+  }
+
+  export type RoomCreateNestedOneWithoutRecordingsInput = {
+    create?: XOR<RoomCreateWithoutRecordingsInput, RoomUncheckedCreateWithoutRecordingsInput>
+    connectOrCreate?: RoomCreateOrConnectWithoutRecordingsInput
+    connect?: RoomWhereUniqueInput
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type RoomUpdateOneRequiredWithoutRecordingsNestedInput = {
+    create?: XOR<RoomCreateWithoutRecordingsInput, RoomUncheckedCreateWithoutRecordingsInput>
+    connectOrCreate?: RoomCreateOrConnectWithoutRecordingsInput
+    upsert?: RoomUpsertWithoutRecordingsInput
+    connect?: RoomWhereUniqueInput
+    update?: XOR<XOR<RoomUpdateToOneWithWhereWithoutRecordingsInput, RoomUpdateWithoutRecordingsInput>, RoomUncheckedUpdateWithoutRecordingsInput>
   }
 
   export type RoomCreateNestedOneWithoutInvitationsInput = {
@@ -8314,10 +9785,6 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutParticipationsInput, UserUpdateWithoutParticipationsInput>, UserUncheckedUpdateWithoutParticipationsInput>
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type RoomCreateNestedOneWithoutMessagesInput = {
@@ -8507,6 +9974,7 @@ export namespace Prisma {
     invitations?: InvitationCreateNestedManyWithoutRoomInput
     participants?: ParticipantCreateNestedManyWithoutRoomInput
     messages?: RoomMessageCreateNestedManyWithoutRoomInput
+    recordings?: RecordingCreateNestedManyWithoutRoomInput
   }
 
   export type RoomUncheckedCreateWithoutHostInput = {
@@ -8519,6 +9987,7 @@ export namespace Prisma {
     invitations?: InvitationUncheckedCreateNestedManyWithoutRoomInput
     participants?: ParticipantUncheckedCreateNestedManyWithoutRoomInput
     messages?: RoomMessageUncheckedCreateNestedManyWithoutRoomInput
+    recordings?: RecordingUncheckedCreateNestedManyWithoutRoomInput
   }
 
   export type RoomCreateOrConnectWithoutHostInput = {
@@ -8767,6 +10236,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type RecordingCreateWithoutRoomInput = {
+    id?: string
+    egressId: string
+    key?: string | null
+    url?: string | null
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingUncheckedCreateWithoutRoomInput = {
+    id?: string
+    egressId: string
+    key?: string | null
+    url?: string | null
+    status?: string
+    createdAt?: Date | string
+  }
+
+  export type RecordingCreateOrConnectWithoutRoomInput = {
+    where: RecordingWhereUniqueInput
+    create: XOR<RecordingCreateWithoutRoomInput, RecordingUncheckedCreateWithoutRoomInput>
+  }
+
+  export type RecordingCreateManyRoomInputEnvelope = {
+    data: RecordingCreateManyRoomInput | RecordingCreateManyRoomInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutRoomsInput = {
     update: XOR<UserUpdateWithoutRoomsInput, UserUncheckedUpdateWithoutRoomsInput>
     create: XOR<UserCreateWithoutRoomsInput, UserUncheckedCreateWithoutRoomsInput>
@@ -8855,6 +10352,103 @@ export namespace Prisma {
     data: XOR<RoomMessageUpdateManyMutationInput, RoomMessageUncheckedUpdateManyWithoutRoomInput>
   }
 
+  export type RecordingUpsertWithWhereUniqueWithoutRoomInput = {
+    where: RecordingWhereUniqueInput
+    update: XOR<RecordingUpdateWithoutRoomInput, RecordingUncheckedUpdateWithoutRoomInput>
+    create: XOR<RecordingCreateWithoutRoomInput, RecordingUncheckedCreateWithoutRoomInput>
+  }
+
+  export type RecordingUpdateWithWhereUniqueWithoutRoomInput = {
+    where: RecordingWhereUniqueInput
+    data: XOR<RecordingUpdateWithoutRoomInput, RecordingUncheckedUpdateWithoutRoomInput>
+  }
+
+  export type RecordingUpdateManyWithWhereWithoutRoomInput = {
+    where: RecordingScalarWhereInput
+    data: XOR<RecordingUpdateManyMutationInput, RecordingUncheckedUpdateManyWithoutRoomInput>
+  }
+
+  export type RecordingScalarWhereInput = {
+    AND?: RecordingScalarWhereInput | RecordingScalarWhereInput[]
+    OR?: RecordingScalarWhereInput[]
+    NOT?: RecordingScalarWhereInput | RecordingScalarWhereInput[]
+    id?: StringFilter<"Recording"> | string
+    roomId?: StringFilter<"Recording"> | string
+    egressId?: StringFilter<"Recording"> | string
+    key?: StringNullableFilter<"Recording"> | string | null
+    url?: StringNullableFilter<"Recording"> | string | null
+    status?: StringFilter<"Recording"> | string
+    createdAt?: DateTimeFilter<"Recording"> | Date | string
+  }
+
+  export type RoomCreateWithoutRecordingsInput = {
+    id?: string
+    name: string
+    liveKitRoomId: string
+    isActive?: boolean
+    createdAt?: Date | string
+    endedAt?: Date | string | null
+    host: UserCreateNestedOneWithoutRoomsInput
+    invitations?: InvitationCreateNestedManyWithoutRoomInput
+    participants?: ParticipantCreateNestedManyWithoutRoomInput
+    messages?: RoomMessageCreateNestedManyWithoutRoomInput
+  }
+
+  export type RoomUncheckedCreateWithoutRecordingsInput = {
+    id?: string
+    name: string
+    hostId: string
+    liveKitRoomId: string
+    isActive?: boolean
+    createdAt?: Date | string
+    endedAt?: Date | string | null
+    invitations?: InvitationUncheckedCreateNestedManyWithoutRoomInput
+    participants?: ParticipantUncheckedCreateNestedManyWithoutRoomInput
+    messages?: RoomMessageUncheckedCreateNestedManyWithoutRoomInput
+  }
+
+  export type RoomCreateOrConnectWithoutRecordingsInput = {
+    where: RoomWhereUniqueInput
+    create: XOR<RoomCreateWithoutRecordingsInput, RoomUncheckedCreateWithoutRecordingsInput>
+  }
+
+  export type RoomUpsertWithoutRecordingsInput = {
+    update: XOR<RoomUpdateWithoutRecordingsInput, RoomUncheckedUpdateWithoutRecordingsInput>
+    create: XOR<RoomCreateWithoutRecordingsInput, RoomUncheckedCreateWithoutRecordingsInput>
+    where?: RoomWhereInput
+  }
+
+  export type RoomUpdateToOneWithWhereWithoutRecordingsInput = {
+    where?: RoomWhereInput
+    data: XOR<RoomUpdateWithoutRecordingsInput, RoomUncheckedUpdateWithoutRecordingsInput>
+  }
+
+  export type RoomUpdateWithoutRecordingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    liveKitRoomId?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    host?: UserUpdateOneRequiredWithoutRoomsNestedInput
+    invitations?: InvitationUpdateManyWithoutRoomNestedInput
+    participants?: ParticipantUpdateManyWithoutRoomNestedInput
+    messages?: RoomMessageUpdateManyWithoutRoomNestedInput
+  }
+
+  export type RoomUncheckedUpdateWithoutRecordingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    hostId?: StringFieldUpdateOperationsInput | string
+    liveKitRoomId?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    invitations?: InvitationUncheckedUpdateManyWithoutRoomNestedInput
+    participants?: ParticipantUncheckedUpdateManyWithoutRoomNestedInput
+    messages?: RoomMessageUncheckedUpdateManyWithoutRoomNestedInput
+  }
+
   export type RoomCreateWithoutInvitationsInput = {
     id?: string
     name: string
@@ -8865,6 +10459,7 @@ export namespace Prisma {
     host: UserCreateNestedOneWithoutRoomsInput
     participants?: ParticipantCreateNestedManyWithoutRoomInput
     messages?: RoomMessageCreateNestedManyWithoutRoomInput
+    recordings?: RecordingCreateNestedManyWithoutRoomInput
   }
 
   export type RoomUncheckedCreateWithoutInvitationsInput = {
@@ -8877,6 +10472,7 @@ export namespace Prisma {
     endedAt?: Date | string | null
     participants?: ParticipantUncheckedCreateNestedManyWithoutRoomInput
     messages?: RoomMessageUncheckedCreateNestedManyWithoutRoomInput
+    recordings?: RecordingUncheckedCreateNestedManyWithoutRoomInput
   }
 
   export type RoomCreateOrConnectWithoutInvitationsInput = {
@@ -8905,6 +10501,7 @@ export namespace Prisma {
     host?: UserUpdateOneRequiredWithoutRoomsNestedInput
     participants?: ParticipantUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomUncheckedUpdateWithoutInvitationsInput = {
@@ -8917,6 +10514,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     participants?: ParticipantUncheckedUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUncheckedUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUncheckedUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomCreateWithoutParticipantsInput = {
@@ -8929,6 +10527,7 @@ export namespace Prisma {
     host: UserCreateNestedOneWithoutRoomsInput
     invitations?: InvitationCreateNestedManyWithoutRoomInput
     messages?: RoomMessageCreateNestedManyWithoutRoomInput
+    recordings?: RecordingCreateNestedManyWithoutRoomInput
   }
 
   export type RoomUncheckedCreateWithoutParticipantsInput = {
@@ -8941,6 +10540,7 @@ export namespace Prisma {
     endedAt?: Date | string | null
     invitations?: InvitationUncheckedCreateNestedManyWithoutRoomInput
     messages?: RoomMessageUncheckedCreateNestedManyWithoutRoomInput
+    recordings?: RecordingUncheckedCreateNestedManyWithoutRoomInput
   }
 
   export type RoomCreateOrConnectWithoutParticipantsInput = {
@@ -8992,6 +10592,7 @@ export namespace Prisma {
     host?: UserUpdateOneRequiredWithoutRoomsNestedInput
     invitations?: InvitationUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomUncheckedUpdateWithoutParticipantsInput = {
@@ -9004,6 +10605,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     invitations?: InvitationUncheckedUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUncheckedUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUncheckedUpdateManyWithoutRoomNestedInput
   }
 
   export type UserUpsertWithoutParticipationsInput = {
@@ -9045,6 +10647,7 @@ export namespace Prisma {
     host: UserCreateNestedOneWithoutRoomsInput
     invitations?: InvitationCreateNestedManyWithoutRoomInput
     participants?: ParticipantCreateNestedManyWithoutRoomInput
+    recordings?: RecordingCreateNestedManyWithoutRoomInput
   }
 
   export type RoomUncheckedCreateWithoutMessagesInput = {
@@ -9057,6 +10660,7 @@ export namespace Prisma {
     endedAt?: Date | string | null
     invitations?: InvitationUncheckedCreateNestedManyWithoutRoomInput
     participants?: ParticipantUncheckedCreateNestedManyWithoutRoomInput
+    recordings?: RecordingUncheckedCreateNestedManyWithoutRoomInput
   }
 
   export type RoomCreateOrConnectWithoutMessagesInput = {
@@ -9108,6 +10712,7 @@ export namespace Prisma {
     host?: UserUpdateOneRequiredWithoutRoomsNestedInput
     invitations?: InvitationUpdateManyWithoutRoomNestedInput
     participants?: ParticipantUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomUncheckedUpdateWithoutMessagesInput = {
@@ -9120,6 +10725,7 @@ export namespace Prisma {
     endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     invitations?: InvitationUncheckedUpdateManyWithoutRoomNestedInput
     participants?: ParticipantUncheckedUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUncheckedUpdateManyWithoutRoomNestedInput
   }
 
   export type UserUpsertWithoutMessagesInput = {
@@ -9186,6 +10792,7 @@ export namespace Prisma {
     invitations?: InvitationUpdateManyWithoutRoomNestedInput
     participants?: ParticipantUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomUncheckedUpdateWithoutHostInput = {
@@ -9198,6 +10805,7 @@ export namespace Prisma {
     invitations?: InvitationUncheckedUpdateManyWithoutRoomNestedInput
     participants?: ParticipantUncheckedUpdateManyWithoutRoomNestedInput
     messages?: RoomMessageUncheckedUpdateManyWithoutRoomNestedInput
+    recordings?: RecordingUncheckedUpdateManyWithoutRoomNestedInput
   }
 
   export type RoomUncheckedUpdateManyWithoutHostInput = {
@@ -9280,6 +10888,15 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type RecordingCreateManyRoomInput = {
+    id?: string
+    egressId: string
+    key?: string | null
+    url?: string | null
+    status?: string
+    createdAt?: Date | string
+  }
+
   export type InvitationUpdateWithoutRoomInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
@@ -9346,6 +10963,33 @@ export namespace Prisma {
     senderIdentity?: StringFieldUpdateOperationsInput | string
     senderName?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingUpdateWithoutRoomInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingUncheckedUpdateWithoutRoomInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecordingUncheckedUpdateManyWithoutRoomInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    egressId?: StringFieldUpdateOperationsInput | string
+    key?: NullableStringFieldUpdateOperationsInput | string | null
+    url?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

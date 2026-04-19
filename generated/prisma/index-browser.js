@@ -137,6 +137,16 @@ exports.Prisma.RoomScalarFieldEnum = {
   endedAt: 'endedAt'
 };
 
+exports.Prisma.RecordingScalarFieldEnum = {
+  id: 'id',
+  roomId: 'roomId',
+  egressId: 'egressId',
+  key: 'key',
+  url: 'url',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.InvitationScalarFieldEnum = {
   id: 'id',
   roomId: 'roomId',
@@ -182,6 +192,7 @@ exports.Prisma.NullsOrder = {
 exports.Prisma.ModelName = {
   User: 'User',
   Room: 'Room',
+  Recording: 'Recording',
   Invitation: 'Invitation',
   Participant: 'Participant',
   RoomMessage: 'RoomMessage'

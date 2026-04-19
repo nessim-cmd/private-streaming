@@ -31,8 +31,23 @@ model Room {
   invitations  Invitation[]
   participants Participant[]
   messages     RoomMessage[]
+  recordings   Recording[]
 
   @@index([hostId])
+}
+
+model Recording {
+  id        String   @id @default(cuid())
+  roomId    String
+  egressId  String   @unique
+  key       String?
+  url       String?
+  status    String   @default("starting") // starting, active, completed, failed
+  createdAt DateTime @default(now())
+
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId])
 }
 
 model Invitation {
