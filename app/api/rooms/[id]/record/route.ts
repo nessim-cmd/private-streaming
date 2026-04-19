@@ -49,13 +49,18 @@ export async function POST(
       }
 
       const filepath = `recordings/${room.liveKitRoomId}-${Date.now()}.mp4`;
+      
+      let s3Endpoint = process.env.S3_ENDPOINT || "";
+      if (s3Endpoint && !s3Endpoint.startsWith("http")) {
+        s3Endpoint = `https://${s3Endpoint}`;
+      }
 
       // Structure for modern LiveKit SDK Egress
       const output = {
         fileType: EncodedFileType.MP4,
         filepath: filepath,
         s3: {
-          endpoint: process.env.S3_ENDPOINT || "",
+          endpoint: s3Endpoint,
           accessKey: process.env.S3_ACCESS_KEY_ID || "",
           secret: process.env.S3_SECRET_ACCESS_KEY || "",
           bucket: process.env.S3_BUCKET_NAME || "",
@@ -96,9 +101,13 @@ export async function POST(
     }
 
     return Response.json({ error: "Invalid action" }, { status: 400 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Recording error:", error);
-    return Response.json({ error: "Internal server error" }, { status: 500 });
+    return Response.json({ 
+      error: "Recording failed", 
+      details: error.message || "Unknown error",
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined
+    }, { status: 500 });
   }
 }
 

@@ -73,7 +73,7 @@ function RecordingButton({ roomId }: { roomId: string }) {
       
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || "Failed to toggle recording");
+        alert(`${data.error}: ${data.details || "Unknown error"}`);
       } else {
         setIsRecording(!isRecording);
       }
