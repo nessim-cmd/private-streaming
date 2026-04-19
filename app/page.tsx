@@ -1,80 +1,131 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { Shield, Share2, Smartphone } from "lucide-react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Button } from "../components/ui/Button";
+import { Shield, Share2, Smartphone, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "../lib/i18n";
+
+const EXPERIENCE_IMAGES = [
+  "/images/gamers.png",
+  "/images/wedding.png",
+  "/images/party.png"
+];
 
 export default function Home() {
+  const { t } = useTranslation();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % EXPERIENCE_IMAGES.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center py-10 sm:py-20 px-4 text-center">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+    <div className="relative min-h-screen flex flex-col items-center justify-center py-12 sm:py-24 px-4 overflow-hidden">
+      {/* Dynamic Background Slideshow */}
+      <div className="fixed inset-0 z-0">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentImageIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.9 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 2 }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${EXPERIENCE_IMAGES[currentImageIndex]})` }}
+          />
+        </AnimatePresence>
+        {/* Gray/Dark Overlay for Readability */}
+        <div className="absolute inset-0 bg-zinc-950/80 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/20 to-zinc-950" />
+      </div>
+
+      <div className="hero-glow" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-4xl mx-auto"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="max-w-5xl mx-auto text-center z-10"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] sm:text-xs font-medium mb-6 sm:mb-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 text-white text-xs sm:text-sm font-bold mb-8 backdrop-blur-md"
+        >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
           </span>
-          Next Generation Streaming
-        </div>
-        
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-4 sm:mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent leading-[1.05]">
-          Private Streaming <br />
-          <span className="text-primary">Simplified.</span>
+          {t('hero_badge')}
+        </motion.div>
+
+        <h1 className="text-5xl sm:text-7xl md:text-9xl font-black tracking-tighter mb-8 leading-[0.85] text-white">
+          <span className="gradient-text">{t('hero_title')}</span> <br />
+          <span className="primary-gradient-text italic drop-shadow-2xl">{t('hero_simplified')}</span>
         </h1>
-        
-        <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
-          Create secure, private live streaming rooms in seconds. 
-          Invite guests with a single link, QR code, or email. No complicated setup.
+
+        <p className="text-lg sm:text-xl md:text-2xl text-zinc-300 mb-12 max-w-3xl mx-auto leading-relaxed font-bold drop-shadow-lg">
+          {t('hero_desc')}
         </p>
-        
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-14 sm:mb-20">
-          <Button asChild size="lg" className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-semibold">
-            <Link href="/dashboard">Start Your Stream</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="h-12 sm:h-14 px-6 sm:px-8 text-base sm:text-lg font-semibold">
-            <Link href="/sign-in">Join a Room</Link>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-24">
+          <Button asChild size="lg" className="h-16 px-12 text-xl font-black rounded-2xl shadow-2xl shadow-primary/40 group btn-hover-effect border border-white/10">
+            <Link href="/dashboard" className="flex items-center gap-3">
+              {t('start_stream')}
+              <ArrowRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 text-left mt-4 sm:mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left relative">
+          <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full -z-10" />
           {[
             {
               icon: Shield,
-              title: "Fully Private",
-              desc: "Your stream, your rules. Only invited guests can join your secure room."
+              title: t('feature_private_title'),
+              desc: t('feature_private_desc'),
+              color: "text-blue-400"
             },
             {
               icon: Share2,
-              title: "Easy Sharing",
-              desc: "Share via unique links, dynamic QR codes, or direct email invitations."
+              title: t('feature_sharing_title'),
+              desc: t('feature_sharing_desc'),
+              color: "text-purple-400"
             },
             {
               icon: Smartphone,
-              title: "PWA Ready",
-              desc: "Install on your home screen and stream from anywhere with our mobile-first design."
+              title: t('feature_pwa_title'),
+              desc: t('feature_pwa_desc'),
+              color: "text-emerald-400"
             }
           ].map((feature, i) => (
-            <motion.div 
+            <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-              className="glass p-6 rounded-2xl"
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="glass p-8 rounded-[2.5rem] border-white/10 hover:border-white/20 transition-all group"
             >
-              <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center mb-4 text-primary">
-                <feature.icon className="h-6 w-6" />
+              <div className={`h-14 w-14 rounded-2xl bg-zinc-900/50 flex items-center justify-center mb-6 ${feature.color} border border-white/5 shadow-inner group-hover:scale-110 transition-transform`}>
+                <feature.icon className="h-7 w-7" />
               </div>
-              <h3 className="text-lg font-bold mb-2 text-white">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{feature.desc}</p>
+              <h3 className="text-2xl font-black mb-3 text-white italic">{feature.title}</h3>
+              <p className="text-zinc-400 leading-relaxed font-bold text-sm">{feature.desc}</p>
             </motion.div>
           ))}
         </div>
       </motion.div>
+
+      {/* Decorative Elements */}
+      <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 w-[600px] h-[600px] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none" />
     </div>
   );
 }

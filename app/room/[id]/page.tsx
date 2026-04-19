@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, use } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Button } from "@/components/ui/Button";
-import { StreamEnded } from "@/components/LiveRoom/StreamEnded";
-import { VideoConference } from "@/components/LiveRoom/VideoConference";
-import { RoomSharePanel } from "@/components/LiveRoom/RoomSharePanel";
-import { RoomMessageHistory } from "@/components/LiveRoom/RoomMessageHistory";
-import { Bell, CheckCircle2, ChevronLeft, Loader2, Users, Video, XCircle } from "lucide-react";
+import { Button } from "../../../components/ui/Button";
+import { StreamEnded } from "../../../components/LiveRoom/StreamEnded";
+import { VideoConference } from "../../../components/LiveRoom/VideoConference";
+import { RoomSharePanel } from "../../../components/LiveRoom/RoomSharePanel";
+import { RoomMessageHistory } from "../../../components/LiveRoom/RoomMessageHistory";
+import { Bell, CheckCircle2, ChevronLeft, Loader2, Users, Video, XCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "../../../lib/i18n";
 
 interface Room {
   id: string;
@@ -28,6 +29,7 @@ interface JoinRequest {
 type AccessStatus = "unknown" | "signin-required" | "not-requested" | "pending" | "approved" | "rejected";
 
 export default function RoomPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useTranslation();
   const { id } = use(params);
   const { isLoaded: isUserLoaded, isSignedIn } = useUser();
 
@@ -267,25 +269,32 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-muted-foreground animate-pulse">Entering the room...</p>
+      <div className="flex-1 flex flex-col items-center justify-center gap-6">
+        <div className="relative">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse" />
+        </div>
+        <p className="text-zinc-400 font-bold tracking-widest uppercase text-xs animate-pulse">
+          {t('loading')}
+        </p>
       </div>
     );
   }
 
   if (!room) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-6">
-        <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
-          <Users className="h-10 w-10" />
+      <div className="flex-1 flex flex-col items-center justify-center gap-8 px-4 text-center">
+        <div className="h-24 w-24 rounded-3xl bg-red-500/10 flex items-center justify-center text-red-500 shadow-inner">
+          <XCircle className="h-12 w-12" />
         </div>
-        <h1 className="text-2xl font-bold">Room Not Found</h1>
-        <p className="text-muted-foreground max-w-md text-center">
-          The room you&apos;re looking for doesn&apos;t exist or has been deleted.
-        </p>
-        <Button onClick={() => router.push("/dashboard")} variant="outline">
-          Return to Dashboard
+        <div className="space-y-2">
+          <h1 className="text-3xl font-black text-white">Room Not Found</h1>
+          <p className="text-zinc-400 max-w-md mx-auto font-medium">
+            The room you&apos;re looking for doesn&apos;t exist or has been deleted.
+          </p>
+        </div>
+        <Button onClick={() => router.push("/dashboard")} variant="outline" className="h-12 px-8 rounded-xl font-bold">
+          {t('back_to_dashboard')}
         </Button>
       </div>
     );
@@ -296,79 +305,98 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
   }
 
   return (
-    <div className="flex-1 flex flex-col">
-      <header className="border-b border-border bg-background/50 backdrop-blur-sm px-3 sm:px-8 py-3 sm:py-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
+    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <header className="border-b border-white/5 bg-zinc-950/50 backdrop-blur-xl px-4 sm:px-8 h-16 shrink-0">
+        <div className="container mx-auto h-full flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
             <Button 
               variant="ghost" 
               size="sm" 
               onClick={handleExit}
               disabled={endingRoom}
-              className="flex gap-2 px-2 sm:px-3"
+              className="flex gap-2 h-9 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white"
             >
               <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">{endingRoom ? "Ending..." : "Exit"}</span>
+              <span className="hidden sm:inline font-bold">{endingRoom ? t('loading') : t('back_to_dashboard')}</span>
             </Button>
-            <div>
-              <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="h-6 w-px bg-white/10 hidden sm:block" />
+            <div className="min-w-0">
+              <h1 className="text-lg font-black text-white flex items-center gap-2 truncate">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${room.isActive ? 'bg-emerald-500' : 'bg-red-500'} opacity-75`}></span>
+                  <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${room.isActive ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+                </span>
                 {room.name}
               </h1>
-              <p className="text-xs text-muted-foreground">{isHost ? "Hosted by you" : "Awaiting host approval"}</p>
+              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest truncate">
+                {isHost ? "Host" : "Participant"}
+              </p>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="bg-zinc-900 px-3 py-1 rounded-full flex items-center gap-2 text-xs font-medium border border-border">
-              <Users className="h-3 w-3" />
-              <span>0 Participants</span>
+          <div className="flex items-center gap-3 shrink-0">
+            <div className="bg-zinc-900/50 px-4 py-1.5 rounded-full flex items-center gap-2 text-xs font-bold text-zinc-400 border border-white/5 shadow-inner">
+              <Users className="h-3.5 w-3.5 text-primary" />
+              <span>0 {t('participants')}</span>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col p-3 sm:p-8">
-        <div className="container mx-auto flex-1 flex flex-col max-w-6xl">
+      <main className="flex-1 flex flex-col overflow-y-auto bg-zinc-950">
+        <div className="container mx-auto flex-1 flex flex-col max-w-6xl p-4 sm:p-8">
           {isHost && room && room.isActive === false && (
-            <div className="space-y-4 mb-4">
-              <div className="glass rounded-2xl border border-white/10 p-4 sm:p-6">
-                <h2 className="text-xl font-bold text-white">This room is currently ended</h2>
-                <p className="text-zinc-300 mt-2">
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6 mb-8"
+            >
+              <div className="glass-card rounded-[2rem] p-8 border border-white/10 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                  <Video className="h-32 w-32" />
+                </div>
+                <h2 className="text-2xl font-black text-white mb-2 italic">Stream Ended</h2>
+                <p className="text-zinc-400 font-medium max-w-lg leading-relaxed">
                   You can reopen it to go live again, or review all past messages below.
                 </p>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  <Button onClick={reopenRoom} disabled={reopening} className="gap-2">
-                    {reopening ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    {reopening ? "Reopening..." : "Reopen Room"}
+                <div className="flex flex-wrap gap-3 mt-8">
+                  <Button onClick={reopenRoom} disabled={reopening} className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20 btn-hover-effect">
+                    {reopening ? <Loader2 className="h-5 w-5 animate-spin" /> : <Sparkles className="h-5 w-5" />}
+                    {reopening ? t('loading') : "Reopen Room"}
                   </Button>
-                  <Button variant="outline" onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
+                  <Button variant="outline" onClick={() => router.push("/dashboard")} className="h-12 px-8 rounded-xl font-bold border-white/10 glass">
+                    {t('back_to_dashboard')}
+                  </Button>
                 </div>
               </div>
 
               <RoomMessageHistory roomId={room.id} />
-            </div>
+            </motion.div>
           )}
 
           {isHost && token && joinRequests.length > 0 && (
-            <div className="mb-3 rounded-xl border border-amber-300/30 bg-amber-500/10 px-4 py-3">
-              <div className="flex items-center gap-2 text-amber-200 text-sm font-medium">
-                <Bell className="h-4 w-4" />
-                {joinRequests.length} request{joinRequests.length > 1 ? "s" : ""} waiting for approval
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mb-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-5 shadow-2xl backdrop-blur-md"
+            >
+              <div className="flex items-center gap-3 text-amber-400 text-sm font-black uppercase tracking-widest mb-4">
+                <Bell className="h-5 w-5 animate-bounce" />
+                {joinRequests.length} {t('invite_others')}
               </div>
-              <div className="mt-2 space-y-2">
+              <div className="space-y-3">
                 {joinRequests.map((request) => (
-                  <div key={request.id} className="flex items-center justify-between bg-black/25 rounded-lg px-3 py-2">
-                    <div className="text-sm text-zinc-200">{request.email}</div>
+                  <div key={request.id} className="flex items-center justify-between bg-zinc-950/50 rounded-xl px-4 py-3 border border-white/5">
+                    <div className="text-sm text-zinc-200 font-medium font-mono">{request.email}</div>
                     <div className="flex items-center gap-2">
                       <Button
                         size="sm"
                         onClick={() => handleRequestDecision(request.id, "approve")}
                         disabled={actingRequestId === request.id}
-                        className="h-8 px-3"
+                        className="h-9 px-4 rounded-lg font-bold"
                       >
                         {actingRequestId === request.id && actingRequestAction === "approve" ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           "Approve"
                         )}
@@ -378,10 +406,10 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                         variant="outline"
                         onClick={() => handleRequestDecision(request.id, "reject")}
                         disabled={actingRequestId === request.id}
-                        className="h-8 px-3 border-red-400/40 text-red-200 hover:bg-red-500/10"
+                        className="h-9 px-4 rounded-lg font-bold border-red-500/30 text-red-400 hover:bg-red-500/10"
                       >
                         {actingRequestId === request.id && actingRequestAction === "reject" ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           "Reject"
                         )}
@@ -390,24 +418,31 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           )}
 
           {hostNotice && (
-            <div className="mb-3 rounded-xl border border-emerald-300/30 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-200">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 font-bold text-center shadow-lg"
+            >
               {hostNotice}
-            </div>
+            </motion.div>
           )}
 
           {isHost && room && (
-            <div className="mb-4">
+            <div className="mb-8">
               <div className="md:hidden">
-                <details className="glass rounded-2xl border border-white/10 overflow-hidden">
-                  <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-white flex items-center justify-between">
-                    Share room
-                    <span className="text-zinc-400 text-xs">QR, link, email</span>
+                <details className="glass-card rounded-2xl border border-white/10 overflow-hidden">
+                  <summary className="cursor-pointer list-none px-5 py-4 text-sm font-black text-white flex items-center justify-between uppercase tracking-widest">
+                    <span className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      {t('share_room')}
+                    </span>
+                    <span className="text-zinc-500 text-[10px]">QR, Link, Email</span>
                   </summary>
-                  <div className="px-3 pb-3">
+                  <div className="px-4 pb-4">
                     <RoomSharePanel roomId={room.id} roomName={room.name} />
                   </div>
                 </details>
@@ -420,32 +455,34 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
           {!token && room.isActive ? (
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="flex-1 flex items-center justify-center"
+              className="flex-1 flex items-center justify-center py-12"
             >
-              <div className="glass p-6 sm:p-12 rounded-3xl max-w-md w-full text-center space-y-6 sm:space-y-8">
-                <div className="h-20 w-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary">
-                  <Video className="h-10 w-10" />
+              <div className="glass-card p-8 sm:p-16 rounded-[3rem] max-w-xl w-full text-center space-y-8 sm:space-y-12 relative overflow-hidden">
+                <div className="absolute inset-0 bg-primary/5 blur-[100px] -z-10" />
+                
+                <div className="h-24 w-24 bg-primary/20 rounded-[2rem] flex items-center justify-center mx-auto text-primary shadow-2xl group-hover:scale-110 transition-transform">
+                  <Video className="h-12 w-12" />
                 </div>
 
                 {isHost ? (
                   <>
-                    <div className="space-y-2">
-                      <h2 className="text-2xl font-bold text-white">Ready to go live?</h2>
-                      <p className="text-muted-foreground">
-                        Connect your camera and microphone to start streaming.
+                    <div className="space-y-3">
+                      <h2 className="text-3xl font-black text-white leading-tight italic">Ready to go live?</h2>
+                      <p className="text-zinc-400 font-medium text-lg leading-relaxed">
+                        Connect your camera and microphone to start your secure stream.
                       </p>
                     </div>
                     <Button 
                       onClick={joinRoom} 
                       disabled={joining} 
-                      className="w-full h-12 text-lg font-semibold"
+                      className="w-full h-16 text-xl font-black rounded-2xl shadow-2xl shadow-primary/30 btn-hover-effect"
                     >
                       {joining ? (
                         <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Connecting...
+                          <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+                          {t('loading')}
                         </>
                       ) : (
                         "Join Stream"
@@ -456,18 +493,18 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                   <>
                     {accessStatus === "signin-required" && (
                       <>
-                        <div className="space-y-2">
-                          <h2 className="text-2xl font-bold text-white">Sign in required</h2>
-                          <p className="text-muted-foreground">
+                        <div className="space-y-3">
+                          <h2 className="text-3xl font-black text-white leading-tight">{t('login')}</h2>
+                          <p className="text-zinc-400 font-medium text-lg leading-relaxed">
                             Please sign in so the host can see your identity and approve your access.
                           </p>
                         </div>
-                        <div className="grid gap-2">
-                          <Button asChild className="w-full h-11">
-                            <Link href={`/sign-in?redirect_url=/room/${id}`}>Sign In</Link>
+                        <div className="grid gap-3">
+                          <Button asChild className="w-full h-14 rounded-2xl font-black text-lg">
+                            <Link href={`/sign-in?redirect_url=/room/${id}`}>{t('login')}</Link>
                           </Button>
-                          <Button asChild variant="outline" className="w-full h-11">
-                            <Link href={`/sign-up?redirect_url=/room/${id}`}>Sign Up</Link>
+                          <Button asChild variant="outline" className="w-full h-14 rounded-2xl font-black text-lg border-white/10 glass">
+                            <Link href={`/sign-up?redirect_url=/room/${id}`}>{t('signup')}</Link>
                           </Button>
                         </div>
                       </>
@@ -475,17 +512,17 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
                     {accessStatus === "not-requested" && (
                       <>
-                        <div className="space-y-2">
-                          <h2 className="text-2xl font-bold text-white">Request to join</h2>
-                          <p className="text-muted-foreground">
-                            Ask the host for approval before entering this live room.
+                        <div className="space-y-3">
+                          <h2 className="text-3xl font-black text-white leading-tight italic">Request to join</h2>
+                          <p className="text-zinc-400 font-medium text-lg leading-relaxed">
+                            Ask the host for approval before entering this private room.
                           </p>
                         </div>
-                        <Button onClick={requestAccess} disabled={requestingAccess} className="w-full h-12 text-lg font-semibold">
+                        <Button onClick={requestAccess} disabled={requestingAccess} className="w-full h-16 text-xl font-black rounded-2xl shadow-2xl shadow-primary/30 btn-hover-effect">
                           {requestingAccess ? (
                             <>
-                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                              Sending request...
+                              <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+                              {t('loading')}
                             </>
                           ) : (
                             "Request Access"
@@ -496,11 +533,16 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
                     {accessStatus === "pending" && (
                       <>
-                        <div className="space-y-2">
-                          <h2 className="text-2xl font-bold text-white">Waiting for host approval</h2>
-                          <p className="text-muted-foreground">
-                            Your request is pending. This page auto-refreshes and will join automatically once approved.
-                          </p>
+                        <div className="space-y-4">
+                          <div className="mx-auto h-16 w-16 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center border border-amber-500/20">
+                            <Loader2 className="h-8 w-8 animate-spin" />
+                          </div>
+                          <div className="space-y-2">
+                            <h2 className="text-2xl font-black text-white">Waiting for Approval</h2>
+                            <p className="text-zinc-400 font-medium leading-relaxed">
+                              Your request is pending. This page joins automatically once approved.
+                            </p>
+                          </div>
                         </div>
                         <Button
                           variant="outline"
@@ -511,7 +553,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                               setAccessStatus(data.status as AccessStatus);
                             }
                           }}
-                          className="w-full h-11"
+                          className="w-full h-14 rounded-2xl font-black border-white/10 glass"
                         >
                           Refresh Status
                         </Button>
@@ -520,37 +562,41 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
 
                     {accessStatus === "rejected" && (
                       <>
-                        <div className="space-y-2">
-                          <div className="mx-auto h-10 w-10 rounded-full bg-red-500/15 text-red-300 flex items-center justify-center">
-                            <XCircle className="h-5 w-5" />
+                        <div className="space-y-4">
+                          <div className="mx-auto h-20 w-20 rounded-3xl bg-red-500/10 text-red-500 flex items-center justify-center border border-red-500/20">
+                            <XCircle className="h-10 w-10" />
                           </div>
-                          <h2 className="text-2xl font-bold text-white">Request rejected</h2>
-                          <p className="text-muted-foreground">
-                            You are rejected to enter this room.
-                          </p>
+                          <div className="space-y-2">
+                            <h2 className="text-3xl font-black text-white leading-tight">Request Rejected</h2>
+                            <p className="text-zinc-400 font-medium text-lg leading-relaxed">
+                              You do not have permission to enter this room.
+                            </p>
+                          </div>
                         </div>
-                        <Button variant="outline" onClick={() => router.push("/dashboard")} className="w-full h-11">
-                          Return to Dashboard
+                        <Button variant="outline" onClick={() => router.push("/dashboard")} className="w-full h-14 rounded-2xl font-black border-white/10 glass">
+                          {t('back_to_dashboard')}
                         </Button>
                       </>
                     )}
 
                     {accessStatus === "approved" && (
                       <>
-                        <div className="space-y-2">
-                          <div className="mx-auto h-10 w-10 rounded-full bg-emerald-500/15 text-emerald-300 flex items-center justify-center">
-                            <CheckCircle2 className="h-5 w-5" />
+                        <div className="space-y-4">
+                          <div className="mx-auto h-20 w-20 rounded-3xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                            <ShieldCheck className="h-10 w-10" />
                           </div>
-                          <h2 className="text-2xl font-bold text-white">Approved</h2>
-                          <p className="text-muted-foreground">
-                            You can now join this live room.
-                          </p>
+                          <div className="space-y-2">
+                            <h2 className="text-3xl font-black text-white leading-tight italic">Approved</h2>
+                            <p className="text-zinc-400 font-medium text-lg leading-relaxed">
+                              Your request was accepted. You can join the stream now.
+                            </p>
+                          </div>
                         </div>
-                        <Button onClick={joinRoom} disabled={joining} className="w-full h-12 text-lg font-semibold">
+                        <Button onClick={joinRoom} disabled={joining} className="w-full h-16 text-xl font-black rounded-2xl shadow-2xl shadow-primary/30 btn-hover-effect">
                           {joining ? (
                             <>
-                              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                              Connecting...
+                              <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+                              {t('loading')}
                             </>
                           ) : (
                             "Join Stream"
@@ -560,7 +606,7 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
                     )}
 
                     {accessStatus === "unknown" && (
-                      <div className="text-sm text-muted-foreground">Checking access...</div>
+                      <div className="text-sm font-bold text-zinc-500 uppercase tracking-widest animate-pulse">{t('loading')}</div>
                     )}
                   </>
                 )}
@@ -579,3 +625,4 @@ export default function RoomPage({ params }: { params: Promise<{ id: string }> }
     </div>
   );
 }
+

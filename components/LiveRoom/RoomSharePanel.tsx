@@ -2,10 +2,11 @@
 
 import type { FormEvent } from "react";
 import { useMemo, useState } from "react";
-import { RoomQRCode } from "@/components/QRCode/RoomQRCode";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Check, Copy, Loader2, Mail, QrCode, Share2 } from "lucide-react";
+import { RoomQRCode } from "../QRCode/RoomQRCode";
+import { Button } from "../ui/Button";
+import { Input } from "../ui/Input";
+import { Check, Copy, Loader2, Mail, QrCode, Share2, MessageCircle, Camera } from "lucide-react";
+import { useTranslation } from "../../lib/i18n";
 
 interface RoomSharePanelProps {
   roomId: string;
@@ -13,6 +14,7 @@ interface RoomSharePanelProps {
 }
 
 export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isInviting, setIsInviting] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -87,83 +89,87 @@ export function RoomSharePanel({ roomId, roomName }: RoomSharePanelProps) {
       const payload = await response.json();
 
       if (response.ok) {
-        const messageId = typeof payload?.messageId === "string" ? payload.messageId : null;
-        setInviteFeedback(messageId ? `Invite sent. Message ID: ${messageId}` : "Invite sent successfully.");
+        setInviteFeedback(t('copy_link')); // Reusing or custom message
         setEmail("");
       } else {
         const errorMessage = typeof payload?.error === "string" ? payload.error : "Invite failed.";
         setInviteError(errorMessage);
-        console.error("Invite email failed:", errorMessage);
       }
     } catch (error) {
       setInviteError("Network error while sending invite.");
-      console.error("Invite email failed:", error);
     } finally {
       setIsInviting(false);
     }
   };
 
   return (
-    <section className="glass rounded-2xl border border-white/10 p-3 sm:p-5 space-y-4 animate-in">
-      <div className="flex items-center gap-2">
-        <QrCode className="h-4 w-4 text-primary" />
-        <h3 className="text-sm font-semibold text-white">Share this room</h3>
+    <section className="glass-card rounded-[2rem] border border-white/10 p-6 sm:p-8 space-y-6">
+      <div className="flex items-center gap-3">
+        <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+          <Share2 className="h-5 w-5 text-primary" />
+        </div>
+        <h3 className="text-xl font-black text-white italic">{t('share_room')}</h3>
       </div>
 
-      <div className="grid gap-3 sm:gap-4 lg:grid-cols-[auto_1fr] lg:items-start">
-        <div className="flex flex-col items-center gap-2 shrink-0">
-          <RoomQRCode value={shareableLink} size={112} />
-          <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">QR to join</p>
+      <div className="grid gap-8 lg:grid-cols-[140px_1fr] lg:items-start">
+        <div className="flex flex-col items-center gap-3 shrink-0">
+          <div className="p-3 bg-white rounded-2xl shadow-2xl">
+            <RoomQRCode value={shareableLink} size={112} />
+          </div>
+          <p className="text-[10px] uppercase font-black tracking-[0.2em] text-zinc-500">{t('scan_qr')}</p>
         </div>
 
-        <div className="space-y-3 min-w-0">
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Link</label>
+        <div className="space-y-6 min-w-0">
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">{t('copy_link')}</label>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 min-w-0 rounded-lg border border-border bg-zinc-900/50 px-3 py-2 text-sm text-zinc-300 truncate font-mono">
+              <div className="flex-1 min-w-0 rounded-xl border border-white/5 bg-zinc-950/50 px-4 py-3 text-sm text-zinc-300 truncate font-mono">
                 {shareableLink}
               </div>
-              <Button type="button" variant="outline" size="sm" onClick={copyLink} className="shrink-0 gap-2 w-full sm:w-auto">
+              <Button type="button" variant="outline" size="sm" onClick={copyLink} className="shrink-0 h-11 px-5 rounded-xl gap-2 font-bold glass">
                 {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                {isCopied ? "Copied" : "Copy"}
+                {isCopied ? "Done" : "Copy"}
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={shareLink} className="gap-2 justify-center">
-              <Share2 className="h-4 w-4" />
-              {isShared ? "Share Opened" : "Open Share Sheet"}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Button type="button" variant="outline" size="sm" onClick={shareLink} className="h-11 rounded-xl gap-2 font-bold glass">
+              <QrCode className="h-4 w-4" />
+              {isShared ? "Opened" : "Share"}
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={openMessengerShare} className="gap-2 justify-center">
+            <Button type="button" variant="outline" size="sm" onClick={openMessengerShare} className="h-11 rounded-xl gap-2 font-bold glass">
+              <MessageCircle className="h-4 w-4" />
               Messenger
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={shareToInstagram} className="gap-2 justify-center">
+            <Button type="button" variant="outline" size="sm" onClick={shareToInstagram} className="h-11 rounded-xl gap-2 font-bold glass">
+              <Camera className="h-4 w-4" />
               Instagram
             </Button>
           </div>
 
-          <form onSubmit={sendInvite} className="space-y-2">
-            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Invite by email</label>
+          <form onSubmit={sendInvite} className="space-y-3">
+            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">{t('send_email')}</label>
             <div className="flex flex-col sm:flex-row gap-2">
               <Input
                 type="email"
                 placeholder="friend@example.com"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                className="bg-zinc-900/50"
+                className="h-11 bg-zinc-950/50 rounded-xl border-white/5"
               />
-              <Button type="submit" disabled={isInviting || !email.trim()} className="shrink-0 gap-2 w-full sm:w-auto">
+              <Button type="submit" disabled={isInviting || !email.trim()} className="shrink-0 h-11 px-6 rounded-xl gap-2 font-bold shadow-lg shadow-primary/10">
                 {isInviting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
-                {isInviting ? "Sending..." : "Send Invite"}
+                {isInviting ? t('loading') : t('create_room')}
               </Button>
             </div>
 
-            {inviteFeedback && <p className="text-xs text-emerald-400">{inviteFeedback}</p>}
-            {inviteError && <p className="text-xs text-red-400">{inviteError}</p>}
+            {inviteFeedback && <p className="text-xs text-emerald-400 font-bold ml-1">✓ {inviteFeedback}</p>}
+            {inviteError && <p className="text-xs text-red-400 font-bold ml-1">✕ {inviteError}</p>}
           </form>
         </div>
       </div>
     </section>
   );
 }
+

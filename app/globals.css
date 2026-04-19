@@ -1,31 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", "Geist Sans", sans-serif;
+  --font-sans: "Inter", "Outfit", "Geist Sans", sans-serif;
   --font-mono: "Geist Mono", monospace;
 }
 
 :root {
-  --background: 240 10% 3.9%;
+  --background: 240 6% 10%;
   --foreground: 0 0% 98%;
-  --card: 240 10% 6%;
+  
+  --card: 240 10% 4%;
   --card-foreground: 0 0% 98%;
+  
   --popover: 240 10% 3.9%;
   --popover-foreground: 0 0% 98%;
-  --primary: 250 84% 54%;
-  --primary-foreground: 0 0% 98%;
-  --secondary: 240 4.8% 15.9%;
+  
+  /* Vibrant, premium primary: Indigo-Violet */
+  --primary: 262 83% 58%;
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 240 5% 12%;
   --secondary-foreground: 0 0% 98%;
-  --muted: 240 4.8% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 240 4.8% 15.9%;
+  
+  --muted: 240 5% 15%;
+  --muted-foreground: 240 5% 65%;
+  
+  --accent: 262 80% 60%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
+  
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 240 4.9% 83.9%;
-  --radius: 0.75rem;
+  
+  --border: 240 5% 15%;
+  --input: 240 5% 15%;
+  --ring: 262 83% 58%;
+  
+  --radius: 1rem;
 }
 
 body {
@@ -36,6 +46,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
   overflow-x: hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(var(--primary), 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(var(--primary), 0.05) 0px, transparent 50%);
 }
 
 html,
@@ -49,49 +62,87 @@ body {
   }
 }
 
+/* Premium Glassmorphism */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(15, 15, 20, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gradient-bg {
-  background: radial-gradient(circle at top center, hsla(var(--primary), 0.15) 0%, transparent 70%);
+.glass-card:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: hsla(var(--primary), 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px hsla(var(--primary), 0.1);
 }
 
-.gradient-border {
+/* Dynamic Backgrounds */
+.hero-glow {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, hsla(var(--primary), 0.15) 0%, transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.gradient-text {
+  background: linear-gradient(to bottom, #fff 30%, hsla(0, 0%, 100%, 0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.primary-gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)), #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Micro-interactions */
+.btn-hover-effect {
   position: relative;
-  background-clip: padding-box;
-  border: 1px solid transparent;
+  overflow: hidden;
 }
 
-.gradient-border::before {
+.btn-hover-effect::after {
   content: "";
   position: absolute;
   top: 0;
-  right: 0;
-  bottom: 0;
   left: 0;
-  z-index: -1;
-  margin: -1px;
-  border-radius: inherit;
-  background: linear-gradient(to bottom right, hsla(var(--primary), 0.5), transparent, hsla(var(--primary), 0.2));
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-.animate-in {
-  animation: fade-in 0.5s ease-out forwards;
+.btn-hover-effect:hover::after {
+  opacity: 1;
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 .safe-pb {
@@ -101,4 +152,10 @@ body {
 .safe-pt {
   padding-top: env(safe-area-inset-top);
 }
+
+/* RTL Support */
+[dir="rtl"] {
+  font-family: "Inter", "Outfit", sans-serif;
+}
+
 

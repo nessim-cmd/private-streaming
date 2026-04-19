@@ -70,7 +70,7 @@ export function PWAInstallPrompt() {
             className="h-7 w-7 p-0 shrink-0"
             aria-label="Dismiss install prompt"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 text-red-500" />
           </Button>
         </div>
 

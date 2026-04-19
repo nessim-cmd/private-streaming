@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { RoomQRCode } from "@/components/QRCode/RoomQRCode";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Copy, ExternalLink, Video, Mail, Check, Loader2 } from "lucide-react";
+import { RoomQRCode } from "../QRCode/RoomQRCode";
+import { Button } from "../ui/Button";
+import { Input } from "../ui/Input";
+import { Copy, Share2, Video, Mail, Check, Loader2, Sparkles } from "lucide-react";
+import { useTranslation } from "../../lib/i18n";
 
 interface RoomCardProps {
   id: string;
@@ -13,21 +14,26 @@ interface RoomCardProps {
 }
 
 export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isInviting, setIsInviting] = useState(false);
   const [isInvited, setIsInvited] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteInfo, setInviteInfo] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
   const fullLink = typeof window !== "undefined" ? window.location.origin + shareableLink : shareableLink;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(fullLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const sendInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
+
     setIsInviting(true);
     setInviteError(null);
     setInviteInfo(null);
@@ -41,95 +47,106 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
 
       if (res.ok) {
         setIsInvited(true);
-        const messageId = typeof payload?.messageId === "string" ? payload.messageId : null;
-        setInviteInfo(messageId ? `Sent. ID: ${messageId}` : "Invitation sent.");
+        setInviteInfo(t('copy_link')); // Reusing or just "Sent"
         setEmail("");
         setTimeout(() => setIsInvited(false), 3000);
       } else {
         const errorMessage = typeof payload?.error === "string" ? payload.error : "Invite failed.";
         setInviteError(errorMessage);
-        console.error("Invite email failed:", errorMessage);
       }
     } catch (error) {
       setInviteError("Network error while sending invite.");
-      console.error("Failed to send invite:", error);
     } finally {
       setIsInviting(false);
     }
   };
 
   return (
-    <div className="glass rounded-2xl p-4 sm:p-6 flex flex-col gap-5 sm:gap-6 animate-in transition-all overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-        <div className="flex gap-3 sm:gap-4 min-w-0">
-          <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-            <Video className="h-6 w-6" />
+    <div className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-6 group overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+        <Sparkles className="h-24 w-24 text-primary" />
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 z-10">
+        <div className="flex gap-4 min-w-0">
+          <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner group-hover:scale-110 transition-transform">
+            <Video className="h-7 w-7" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-base sm:text-lg font-semibold text-white truncate">{name}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground truncate">ID: {id}</p>
+            <h3 className="text-xl font-bold text-white truncate leading-tight">{name}</h3>
+            <p className="text-sm text-zinc-500 truncate font-mono">ID: {id}</p>
           </div>
         </div>
-        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium shrink-0 w-fit ${
-          isActive ? "bg-emerald-500/10 text-emerald-500" : "bg-zinc-500/10 text-zinc-500"
-        }`}>
-          <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-500 animate-pulse" : "bg-zinc-500"}`} />
-          {isActive ? "Live Now" : "Was Live"}
+        <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shrink-0 w-fit border ${isActive ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-zinc-500/10 text-zinc-500 border-zinc-500/20"
+          }`}>
+          <span className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" : "bg-zinc-500"}`} />
+          {isActive ? "Live" : "Inactive"}
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-[auto_1fr] md:gap-8 items-start">
-        <div className="flex flex-col gap-3 items-center shrink-0 w-full md:w-auto min-w-0">
-          <RoomQRCode value={fullLink} size={104} />
-          <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">Scan to join</p>
+      <div className="grid gap-8 lg:grid-cols-[120px_1fr] items-start z-10">
+        <div className="flex flex-col gap-3 items-center shrink-0">
+          <div className="p-3 bg-white rounded-2xl shadow-xl group-hover:rotate-3 transition-transform">
+            <RoomQRCode value={fullLink} size={100} />
+          </div>
+          <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.2em]">{t('scan_qr')}</p>
         </div>
-        
+
         <div className="flex-1 flex flex-col gap-6 w-full min-w-0">
           {/* Share Link */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Share Link</label>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 min-w-0 bg-zinc-900/50 border border-border rounded-lg px-3 py-2 text-sm text-zinc-300 truncate font-mono">
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">{t('copy_link')}</label>
+            <div className="flex gap-2">
+              <div className="flex-1 min-w-0 bg-zinc-950/50 border border-white/5 rounded-xl px-4 py-3 text-sm text-zinc-300 truncate font-mono">
                 {fullLink}
               </div>
-              <Button variant="outline" size="sm" onClick={copyToClipboard} className="shrink-0 w-full sm:w-auto">
-                <Copy className="h-4 w-4" />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={copyToClipboard}
+                className="shrink-0 h-11 w-11 rounded-xl border-white/10 glass hover:text-primary transition-colors"
+              >
+                {copied ? <Check className="h-5 w-5 text-emerald-400" /> : <Copy className="h-5 w-5" />}
               </Button>
             </div>
           </div>
 
           {/* Invite Guests */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Invite via Email</label>
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-1">{t('send_email')}</label>
             <form onSubmit={sendInvite} className="space-y-2">
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Input 
-                  type="email" 
-                  placeholder="friend@example.com" 
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="friend@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 h-9 bg-zinc-900/50"
+                  className="flex-1 h-11 bg-zinc-950/50 rounded-xl border-white/5 focus:border-primary/50"
                 />
-                <Button type="submit" size="sm" disabled={isInviting || !email} className="shrink-0 gap-2 w-full sm:w-auto">
-                  {isInviting ? <Loader2 className="h-4 w-4 animate-spin" /> : isInvited ? <Check className="h-4 w-4" /> : <Mail className="h-4 w-4" />}
-                  {isInvited ? "Sent!" : "Invite"}
+                <Button
+                  type="submit"
+                  size="icon"
+                  disabled={isInviting || !email}
+                  className="shrink-0 h-11 w-11 rounded-xl shadow-lg shadow-primary/10"
+                >
+                  {isInviting ? <Loader2 className="h-5 w-5 animate-spin" /> : isInvited ? <Check className="h-5 w-5" /> : <Mail className="h-5 w-5" />}
                 </Button>
               </div>
-              {inviteInfo && <p className="text-xs text-emerald-400">{inviteInfo}</p>}
-              {inviteError && <p className="text-xs text-red-400">{inviteError}</p>}
+              {inviteInfo && <p className="text-xs text-emerald-400 font-medium ml-1">✓ {inviteInfo}</p>}
+              {inviteError && <p className="text-xs text-red-400 font-medium ml-1">✕ {inviteError}</p>}
             </form>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
-            <Button asChild className="flex-1 gap-2 w-full" variant="primary">
-              <Link href={shareableLink}>
-                <Video className="h-4 w-4" />
-                Open Room
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <Button asChild className="w-full sm:flex-1 h-12 gap-3 rounded-xl font-bold shadow-xl shadow-primary/20 btn-hover-effect">
+              <Link href={shareableLink} className="flex items-center justify-center gap-2 px-4">
+                <Video className="h-5 w-5 shrink-0" />
+                <span className="whitespace-nowrap">{t('start_stream')}</span>
               </Link>
             </Button>
-            <Button variant="outline" asChild className="shrink-0 w-full sm:w-auto">
-              <Link href={shareableLink} target="_blank">
-                <ExternalLink className="h-4 w-4" />
+            <Button variant="outline" asChild className="h-12 w-full sm:w-12 rounded-xl border-white/10 glass hover:text-primary transition-colors shrink-0">
+              <Link href={shareableLink} target="_blank" className="flex items-center justify-center w-full h-full">
+                <Share2 className="h-5 w-5 text-primary" />
               </Link>
             </Button>
           </div>
@@ -138,3 +155,4 @@ export function RoomCard({ id, name, shareableLink, isActive }: RoomCardProps) {
     </div>
   );
 }
+

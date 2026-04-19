@@ -9,7 +9,7 @@ import {
   useTracks,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
-import { LiveOverlayFeed } from "@/components/LiveRoom/LiveOverlayFeed";
+import { LiveOverlayFeed } from "./LiveOverlayFeed";
 
 interface VideoConferenceProps {
   token: string;
@@ -29,16 +29,16 @@ export function VideoConference({ token, isHost, hostIdentity, roomId }: VideoCo
       serverUrl={serverUrl}
       connect={true}
       data-lk-theme="default"
-      className="flex-1 rounded-2xl overflow-hidden border border-border bg-black/40 flex flex-col"
+      className="flex-1 rounded-[2.5rem] overflow-hidden border border-white/10 bg-zinc-950 flex flex-col shadow-2xl relative"
     >
-      <section className="relative flex-1 min-h-[68vh] sm:min-h-[60vh] bg-black">
+      <section className="relative flex-1 min-h-[60vh] bg-black">
         <FocusedVideoLayout hostIdentity={hostIdentity} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/15 to-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-zinc-950/40 pointer-events-none" />
         <LiveOverlayFeed roomId={roomId} />
       </section>
 
-      <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-3 py-2">
-        <ControlBar variation="minimal" />
+      <div className="border-t border-white/5 bg-zinc-900/80 backdrop-blur-2xl px-4 py-4 sm:px-8">
+        <ControlBar variation="minimal" className="!bg-transparent !border-0" />
       </div>
       <RoomAudioRenderer />
     </LiveKitRoom>
@@ -77,10 +77,11 @@ function FocusedVideoLayout({ hostIdentity }: { hostIdentity?: string }) {
   return (
     <div className="h-full w-full">
       {mainTrack ? (
-        <ParticipantTile trackRef={mainTrack} className="h-full w-full" />
+        <ParticipantTile trackRef={mainTrack} className="h-full w-full object-cover" />
       ) : (
-        <div className="h-full flex items-center justify-center text-sm text-zinc-400">
-          Waiting for camera...
+        <div className="h-full flex flex-col items-center justify-center gap-4 text-zinc-600 bg-zinc-900/50">
+          <div className="h-16 w-16 rounded-full border-2 border-dashed border-zinc-800 animate-spin" />
+          <p className="text-sm font-bold uppercase tracking-widest italic">Initializing Camera...</p>
         </div>
       )}
 
@@ -92,3 +93,4 @@ function FocusedVideoLayout({ hostIdentity }: { hostIdentity?: string }) {
     </div>
   );
 }
+
